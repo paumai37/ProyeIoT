@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "808239900750",
+    "project_id": "bbdd-iotgti",
+    "storage_bucket": "bbdd-iotgti.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808239900750:android:3511a3e70c0f27c5787b1f",
+        "android_client_info": {
+          "package_name": "com.example.proyeiot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808239900750-u4nl5k124gt3ch1v1s7t87a39jr4fa87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-ePiiTMZirj41O7u1KuMls7i4-fvPS0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808239900750-u4nl5k124gt3ch1v1s7t87a39jr4fa87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
