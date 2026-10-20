@@ -14,10 +14,10 @@
         android:text="Email" />
 
     <TextView
-        android:id="@+id/providertextview"
+        android:id="@+id/sesion"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="Proveedor" />
+        android:text="Sesion Iniciada" />
 
     <Button
         android:id="@+id/btnClose"
