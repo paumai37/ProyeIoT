@@ -41,10 +41,12 @@ public class HomeActivity extends AppCompatActivity {
 
     void texto() {
         TextView emailTextView = findViewById(R.id.emailtextview);
+        TextView sesiontextView = findViewById(R.id.sesion);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             emailTextView.setText(user.getEmail());
+            sesiontextView.setText(user.getDisplayName());
         } else {
             emailTextView.setText("Sin sesión iniciada");
         }

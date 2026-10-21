@@ -29,8 +29,14 @@
         android:text="Iniciar sesión" />
 
     <Button
-        android:id="@+id/btnRegister"
+        android:id="@+id/btnGoRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Registrarse" />
+
+    <Button
+        android:id="@+id/btnRegister2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Sesion con Google" />
 </LinearLayout>

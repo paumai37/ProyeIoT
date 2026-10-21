@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.OAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,29 +28,29 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        findViewById(R.id.btnRegister).setOnClickListener(this::registrar);
+        findViewById(R.id.btnGoRegister).setOnClickListener(this::pgregister);
+        findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
     }
 
-    void registrar (View v) {
 
-        EditText etEmail = findViewById(R.id.etEmail);
-        EditText etPassword = findViewById(R.id.etPassword);
+    void sesiongoogle(View v) {
 
-        if (!etEmail.getText().toString().trim().isEmpty()
-                && !etPassword.getText().toString().trim().isEmpty()) {
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString()).addOnCompleteListener(this, task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show();
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder("google.com");
 
-                } else {
-                    Toast.makeText(this, "Error: " + task.getException().getMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+        FirebaseAuth.getInstance()
+                .startActivityForSignInWithProvider(this, provider.build())
+                .addOnSuccessListener(authResult -> {
+                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
+    void pgregister (View v) {
+        startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+    }
     void login (View v) {
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etPassword = findViewById(R.id.etPassword);
