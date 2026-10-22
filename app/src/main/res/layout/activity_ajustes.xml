@@ -107,7 +107,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btnSoporte"
+            android:id="@+id/btnAcercade"
             android:layout_width="match_parent"
             android:layout_height="76dp"
             android:layout_marginTop="16dp"
@@ -129,7 +129,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Soporte"
+                    android:text="Acerca de"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold" />

@@ -25,6 +25,7 @@ public class AjustesActivity extends AppCompatActivity {
             return insets;
         });
         findViewById(R.id.btnAjustesPerfil).setOnClickListener(this::gohome);
+        findViewById(R.id.btnAcercade).setOnClickListener(this::goacercade);
 
 
         BottomNavigationView nav = findViewById(R.id.bottomNav);
@@ -45,6 +46,10 @@ public class AjustesActivity extends AppCompatActivity {
     }
     void  gohome (View v) {
         startActivity(new Intent(AjustesActivity.this, HomeActivity.class));
+        finish();
+    }
+    void  goacercade (View v) {
+        startActivity(new Intent(AjustesActivity.this, AcercadeActivity.class));
         finish();
     }
 
