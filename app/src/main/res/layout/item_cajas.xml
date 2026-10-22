@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#181818"
+    app:cardCornerRadius="4dp"
+    app:strokeWidth="0dp"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#1A1A12"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvCaja"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caja X"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvRol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Rol"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivNotificacion"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="Notificaciones"
+            android:src="@android:drawable/ic_popup_reminder"
+            app:layout_constraintBottom_toBottomOf="@id/btnAcceder"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnAcceder" />
+
+        <Button
+            android:id="@+id/btnAcceder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="Acceder"
+            app:layout_constraintEnd_toStartOf="@id/vRol"
+            app:layout_constraintStart_toEndOf="@id/ivNotificacion"
+            app:layout_constraintTop_toBottomOf="@id/tvCaja" />
+
+        <View
+            android:id="@+id/vRol"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circulo_rol"
+            app:layout_constraintBottom_toBottomOf="@id/btnAcceder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnAcceder" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

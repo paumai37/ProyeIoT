@@ -1,9 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Estilo de los botones -->
+    <style name="Widget.ProyeIoT.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/boton_fondo</item>
+        <item name="android:textColor">@color/boton_texto</item>
+    </style>
+
+    <!-- Tema base de la app -->
     <style name="Base.Theme.ProyeIoT" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="materialButtonStyle">@style/Widget.ProyeIoT.Button</item>
     </style>
 
     <style name="Theme.ProyeIoT" parent="Base.Theme.ProyeIoT" />
+
+
+
 </resources>

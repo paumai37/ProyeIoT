@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnGoRegister).setOnClickListener(this::pgregister);
         findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
+        findViewById(R.id.btnRecu).setOnClickListener(this::unknownpassword);
+
     }
 
 
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseAuth.getInstance()
                 .startActivityForSignInWithProvider(this, provider.build())
                 .addOnSuccessListener(authResult -> {
-                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                    startActivity(new Intent(MainActivity.this, MapActivity.class));
                     finish();
                 })
                 .addOnFailureListener(e ->
@@ -50,6 +52,28 @@ public class MainActivity extends AppCompatActivity {
 
     void pgregister (View v) {
         startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+    }
+
+    void unknownpassword (View v) {
+        EditText etEmail = findViewById(R.id.etEmail);
+        String email = etEmail.getText().toString().trim();
+
+        if (email.isEmpty()) {
+            etEmail.setError("Escribe tu email");
+            return;
+        }
+
+        FirebaseAuth.getInstance()
+                .sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Te hemos enviado un correo para restablecer la contraseña",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "Error: " + task.getException().getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
     }
     void login (View v) {
         EditText etEmail = findViewById(R.id.etEmail);
@@ -76,4 +100,5 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
 }

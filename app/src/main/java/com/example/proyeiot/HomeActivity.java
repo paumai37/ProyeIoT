@@ -11,6 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,7 +27,26 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        BottomNavigationView nav = findViewById(R.id.bottomNav);
+        nav.setSelectedItemId(R.id.nav_ajustes);
+        nav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_cajas) {
+                startActivity(new Intent(HomeActivity.this, cajasActivity.class));
+            } else if (id == R.id.nav_mapa) {
+                startActivity(new Intent(HomeActivity.this, MapActivity.class));
+            } else if (id == R.id.nav_ajustes) {
+                startActivity(new Intent(HomeActivity.this, AjustesActivity.class));
+            }
+            return true;
+        });
+
+
+
+
         findViewById(R.id.btnClose).setOnClickListener(this::CloseSesion);
+        findViewById(R.id.btnmapa).setOnClickListener(this::gomap);
 
         texto();
 
@@ -36,6 +56,10 @@ public class HomeActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(HomeActivity.this, MainActivity.class));
         finish();
+    }
+
+    void gomap (View v) {
+        startActivity(new Intent(HomeActivity.this, MapActivity.class));
     }
 
 

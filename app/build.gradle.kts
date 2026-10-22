@@ -43,4 +43,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     implementation(platform("com.google.firebase:firebase-bom:35.0.2"))
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-maps:19.2.0")
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
 }
