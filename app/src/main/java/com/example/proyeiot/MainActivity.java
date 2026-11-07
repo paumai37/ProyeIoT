@@ -21,13 +21,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
         findViewById(R.id.btnGoRegister).setOnClickListener(this::pgregister);
         findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
@@ -44,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 .startActivityForSignInWithProvider(this, provider.build())
                 .addOnSuccessListener(authResult -> {
                     startActivity(new Intent(MainActivity.this, MapActivity.class));
+                    overridePendingTransition(0, 0);
                     finish();
                 })
                 .addOnFailureListener(e ->
@@ -52,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     void pgregister (View v) {
         startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+        overridePendingTransition(0, 0);
     }
 
     void unknownpassword (View v) {
@@ -91,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             } else {
                 Toast.makeText(this, "Error: " + task.getException().getMessage(),

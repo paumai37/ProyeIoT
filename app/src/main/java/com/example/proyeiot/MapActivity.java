@@ -31,13 +31,8 @@ public class MapActivity extends AppCompatActivity {
                 getSharedPreferences("osmdroid", MODE_PRIVATE));
         Configuration.getInstance().setUserAgentValue("ProyeIoT-App-Android/1.0");
 
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_map);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
 
         // Mapa
         map = findViewById(R.id.map);
@@ -65,9 +60,11 @@ public class MapActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.nav_cajas) {
                 startActivity(new Intent(MapActivity.this, cajasActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             } else if (id == R.id.nav_ajustes) {
                 startActivity(new Intent(MapActivity.this, AjustesActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             }
             // nav_mapa: ya estás aquí, no hace nada

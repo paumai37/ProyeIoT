@@ -1,5 +1,7 @@
 package com.example.proyeiot;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +31,19 @@ public class CajasAdapter extends RecyclerView.Adapter<CajasAdapter.CajaViewHold
 
     @Override
     public void onBindViewHolder(@NonNull CajaViewHolder holder, int position) {
-        holder.tvCaja.setText(cajas.get(position));
-        holder.btnAcceder.setOnClickListener(v -> {
-            // abrir la caja
-        });
+        String nombre = cajas.get(position);
+        holder.tvCaja.setText(nombre);
+
+        View.OnClickListener abrir = v -> {
+            Intent i = new Intent(v.getContext(), CajaActivity.class);
+            i.putExtra("cajaNombre", nombre);
+            v.getContext().startActivity(i);
+            if (v.getContext() instanceof Activity) {
+                ((Activity) v.getContext()).overridePendingTransition(0, 0);
+            }
+        };
+        holder.itemView.setOnClickListener(abrir);   // pulsar la tarjeta
+        holder.btnAcceder.setOnClickListener(abrir); // pulsar el botón
     }
 
     @Override

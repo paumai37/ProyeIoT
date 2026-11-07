@@ -20,13 +20,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
         findViewById(R.id.btnRegister).setOnClickListener(this::registrar);
     }
     void registrar (View v) {
@@ -51,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseAuth.getInstance().getCurrentUser().updateProfile(perfil);
 
                     startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                    overridePendingTransition(0, 0);
 
                 } else {
                     Toast.makeText(this, "Error: " + task.getException().getMessage(),

@@ -21,13 +21,7 @@ public class cajasActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_cajas);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         // Lista de cajas
         RecyclerView rv = findViewById(R.id.rvCajas);
@@ -49,9 +43,11 @@ public class cajasActivity extends AppCompatActivity {
 
             if (id == R.id.nav_mapa) {
                 startActivity(new Intent(cajasActivity.this, MapActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             } else if (id == R.id.nav_ajustes) {
                 startActivity(new Intent(cajasActivity.this, AjustesActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             }
             // nav_cajas: ya estás aquí, no hace nada

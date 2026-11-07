@@ -17,13 +17,10 @@ public class AjustesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+
         setContentView(R.layout.activity_ajustes);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+
         findViewById(R.id.btnAjustesPerfil).setOnClickListener(this::gohome);
         findViewById(R.id.btnAcercade).setOnClickListener(this::goacercade);
 
@@ -36,9 +33,11 @@ public class AjustesActivity extends AppCompatActivity {
 
             if (id == R.id.nav_mapa) {
                 startActivity(new Intent(AjustesActivity.this, MapActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             } else if (id == R.id.nav_cajas) {
                 startActivity(new Intent(AjustesActivity.this, cajasActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             }
             return true;
@@ -46,10 +45,12 @@ public class AjustesActivity extends AppCompatActivity {
     }
     void  gohome (View v) {
         startActivity(new Intent(AjustesActivity.this, HomeActivity.class));
+        overridePendingTransition(0, 0);
         finish();
     }
     void  goacercade (View v) {
         startActivity(new Intent(AjustesActivity.this, AcercadeActivity.class));
+        overridePendingTransition(0, 0);
         finish();
     }
 

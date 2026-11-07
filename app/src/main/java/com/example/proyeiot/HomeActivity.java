@@ -20,13 +20,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
         BottomNavigationView nav = findViewById(R.id.bottomNav);
         nav.setSelectedItemId(R.id.nav_ajustes);
         nav.setOnItemSelectedListener(item -> {
@@ -34,10 +28,13 @@ public class HomeActivity extends AppCompatActivity {
 
             if (id == R.id.nav_cajas) {
                 startActivity(new Intent(HomeActivity.this, cajasActivity.class));
+                overridePendingTransition(0, 0);
             } else if (id == R.id.nav_mapa) {
                 startActivity(new Intent(HomeActivity.this, MapActivity.class));
+                overridePendingTransition(0, 0);
             } else if (id == R.id.nav_ajustes) {
                 startActivity(new Intent(HomeActivity.this, AjustesActivity.class));
+                overridePendingTransition(0, 0);
             }
             return true;
         });
@@ -55,11 +52,13 @@ public class HomeActivity extends AppCompatActivity {
     void CloseSesion (View v) {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(HomeActivity.this, MainActivity.class));
+        overridePendingTransition(0, 0);
         finish();
     }
 
     void gomap (View v) {
         startActivity(new Intent(HomeActivity.this, MapActivity.class));
+        overridePendingTransition(0, 0);
     }
 
 
