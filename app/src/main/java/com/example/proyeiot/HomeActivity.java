@@ -11,7 +11,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -20,54 +19,26 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            return insets;
-        });;
-        BottomNavigationView nav = findViewById(R.id.bottomNav);
-        nav.setSelectedItemId(R.id.nav_ajustes);
-        nav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_cajas) {
-                startActivity(new Intent(HomeActivity.this, cajasActivity.class));
-                overridePendingTransition(0, 0);
-            } else if (id == R.id.nav_mapa) {
-                startActivity(new Intent(HomeActivity.this, MapActivity.class));
-                overridePendingTransition(0, 0);
-            } else if (id == R.id.nav_ajustes) {
-                startActivity(new Intent(HomeActivity.this, AjustesActivity.class));
-                overridePendingTransition(0, 0);
-            }
-            return true;
-        });
-
-
-
 
         findViewById(R.id.btnClose).setOnClickListener(this::CloseSesion);
-        findViewById(R.id.btnmapa).setOnClickListener(this::gomap);
+        findViewById(R.id.btnVolver).setOnClickListener(this::volver);
 
         texto();
-
     }
 
-    void CloseSesion (View v) {
+    void CloseSesion(View v) {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(HomeActivity.this, MainActivity.class));
         overridePendingTransition(0, 0);
         finish();
     }
 
-    void gomap (View v) {
-        startActivity(new Intent(HomeActivity.this, MapActivity.class));
+    void volver(View v) {
+        startActivity(new Intent(HomeActivity.this, AjustesActivity.class));
         overridePendingTransition(0, 0);
+        finish();
     }
-
 
     void texto() {
         TextView emailTextView = findViewById(R.id.emailtextview);
@@ -76,10 +47,11 @@ public class HomeActivity extends AppCompatActivity {
 
         if (user != null) {
             emailTextView.setText(user.getEmail());
-            sesiontextView.setText(user.getDisplayName());
+            String nombre = user.getDisplayName();
+            sesiontextView.setText(nombre != null && !nombre.isEmpty() ? nombre : "Sin nombre");
         } else {
             emailTextView.setText("Sin sesión iniciada");
+            sesiontextView.setText("-");
         }
     }
-
 }

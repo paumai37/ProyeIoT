@@ -1,6 +1,5 @@
 package com.example.proyeiot;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -20,17 +19,17 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            return insets;
-        });
-        setContentView(R.layout.activity_register);
+
+
         findViewById(R.id.btnRegister).setOnClickListener(this::registrar);
+        findViewById(R.id.btnGoLogin).setOnClickListener(v -> {
+            finish();   // vuelve al login, que está debajo en la pila
+            overridePendingTransition(0, 0);
+        });
     }
-    void registrar (View v) {
+
+    void registrar(View v) {
 
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etPassword = findViewById(R.id.etPassword);
@@ -38,27 +37,28 @@ public class RegisterActivity extends AppCompatActivity {
 
         String user = etUser.getText().toString().trim();
 
-
         if (!etEmail.getText().toString().trim().isEmpty()
                 && !etPassword.getText().toString().trim().isEmpty()) {
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString()).addOnCompleteListener(this, task -> {
-                if (task.isSuccessful()) {
+            FirebaseAuth.getInstance()
+                    .createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString())
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
 
-                    Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show();
 
-                    UserProfileChangeRequest perfil = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(user)
-                            .build();
-                    FirebaseAuth.getInstance().getCurrentUser().updateProfile(perfil);
+                            UserProfileChangeRequest perfil = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(user)
+                                    .build();
+                            FirebaseAuth.getInstance().getCurrentUser().updateProfile(perfil);
 
-                    startActivity(new Intent(RegisterActivity.this,MainActivity.class));
-                    overridePendingTransition(0, 0);
+                            finish();   // vuelve al login
+                            overridePendingTransition(0, 0);
 
-                } else {
-                    Toast.makeText(this, "Error: " + task.getException().getMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+                        } else {
+                            Toast.makeText(this, "Error: " + task.getException().getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
         }
     }
 }
