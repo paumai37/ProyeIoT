@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="#181818"
+    app:cardBackgroundColor="@color/color_blanco"
     app:cardCornerRadius="4dp"
     app:strokeWidth="0dp"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/caja_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#1A1A12"
         android:padding="12dp">
 
         <TextView
@@ -46,6 +46,7 @@
             app:layout_constraintTop_toTopOf="@id/btnAcceder" />
 
         <Button
+            style="@style/boton_1"
             android:id="@+id/btnAcceder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

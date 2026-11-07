@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- fondos -->
+    <color name="fondo_1">#FF000000</color>
+    <color name="fondo_2">#2B2E33</color>
+    <color name="fondo_3">#E6E6E6</color>
+    <color name="fondo_4">#FFFFFFFF</color>
+
+    <!-- colores principales -->
+    <color name="color_main">#D6F8F402</color>
+
+    <color name="color_blanco">#FFFFFF</color>
+    <color name="color_negro">#000000</color>
+
+    <!-- textos -->
+    <color name="texto_1">#FF000000</color>
+    <color name="texto_2">#383838</color>
+    <color name="texto_3">#FFFFFF</color>
+
+    <!-- BOTONES -->
+
+    <color name="boton_texto">@color/texto_1</color>
+    <color name="boton_fondo">@color/color_main</color>
+
+    <color name="boton2_texto">@color/texto_1</color>
+    <color name="boton2_fondo">@color/fondo_2</color>
+
+    <!-- CAJAS -->
+
+    <color name="caja_texto">@color/texto_1</color>
+    <color name="caja_subtexto">@color/texto_2</color>
+    <color name="caja_fondo">@color/fondo_2</color>
+
+</resources>

@@ -4,6 +4,25 @@
     <style name="Widget.ProyeIoT.Button" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/boton_fondo</item>
         <item name="android:textColor">@color/boton_texto</item>
+        <item name="color">@color/color_negro</item>
+    </style>
+
+    <!-- BOTONES -->
+
+    <style name="boton_1" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/boton_fondo</item>
+        <item name="android:textColor">@color/boton_texto</item>
+    </style>
+
+    <style name="boton_2" parent="Widget.Material3.OverflowLinearLayout">
+        <item name="backgroundTint">@color/boton2_fondo</item>
+        <item name="android:textColor">@color/texto_2</item>
+    </style>
+
+    <!-- CAJAS -->
+    <style name="caja_1">
+        <item name="android:background">@color/fondo_2</item>
+        <item name="android:textColor">@color/texto_1</item>
     </style>
 
     <!-- Tema base de la app -->

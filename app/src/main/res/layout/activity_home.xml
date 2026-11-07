@@ -27,12 +27,14 @@
             android:text="Sesion Iniciada" />
 
         <Button
+            style="@style/boton_1"
             android:id="@+id/btnClose"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cerrar Sesión" />
 
         <Button
+            style="@style/boton_1"
             android:id="@+id/btnmapa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
