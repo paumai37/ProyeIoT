@@ -18,7 +18,7 @@
         android:id="@+id/tvFecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/texto_2" />
+        android:textColor="@color/texto_cajas" />
 
     <ImageButton
         android:layout_width="40dp"
