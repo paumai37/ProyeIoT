@@ -22,6 +22,7 @@
 
     <!-- Título -->
     <TextView
+        style="@style/titulo"
         android:id="@+id/tvTitulo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -29,9 +30,6 @@
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:text="Registro"
-        android:textColor="#D6F8F402"
-        android:textSize="30sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toTopOf="parent" />
@@ -57,8 +55,8 @@
         android:hint="ejemplo@correo.com"
         android:inputType="textEmailAddress"
         android:paddingHorizontal="4dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#777777"
+        android:textColor="@color/texto_1"
+        android:textColorHint="@color/texto_sub"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/tvEmailLabel" />
@@ -67,7 +65,7 @@
         android:id="@+id/lineaEmail"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#FFFFFF"
+        android:background="@color/fondo_3"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/etEmail" />
@@ -93,8 +91,8 @@
         android:hint="Contraseña"
         android:inputType="textPassword"
         android:paddingHorizontal="4dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#777777"
+        android:textColor="@color/texto_1"
+        android:textColorHint="@color/texto_sub"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel" />
@@ -103,7 +101,7 @@
         android:id="@+id/lineaPassword"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#FFFFFF"
+        android:background="@color/fondo_3"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/etPassword" />
@@ -129,8 +127,8 @@
         android:hint="Nombre de usuario"
         android:inputType="textPersonName"
         android:paddingHorizontal="4dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#777777"
+        android:textColor="@color/texto_1"
+        android:textColorHint="@color/texto_sub"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/tvUserLabel" />
@@ -139,7 +137,7 @@
         android:id="@+id/lineaUser"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#FFFFFF"
+        android:background="@color/fondo_3"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/etUser" />
@@ -160,14 +158,13 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        style="@style/boton_2"
         android:id="@+id/btnGoLogin"
-        style="?attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="52dp"
         android:text="¿Ya tienes cuenta? Pulsa aquí"
         android:textAllCaps="false"
-        android:textColor="#D6F8F402"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"

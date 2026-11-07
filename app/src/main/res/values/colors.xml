@@ -17,6 +17,9 @@
     <color name="texto_1">#000000</color>
     <color name="texto_2">#383838</color>
     <color name="texto_3">#FFFFFF</color>
+    <color name="texto_sub">#9A9A9A</color>
+
+    <color name="texto_cajas">#000000</color>
 
     <!-- BOTONES -->
 

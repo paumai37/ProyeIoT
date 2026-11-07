@@ -22,6 +22,7 @@
 
     <!-- Título -->
     <TextView
+        style="@style/titulo"
         android:id="@+id/tvTitulo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -29,9 +30,6 @@
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:text="Perfil"
-        android:textColor="#D6F8F402"
-        android:textSize="30sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toTopOf="parent" />
@@ -75,14 +73,16 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:padding="20dp"
+            android:background="@color/fondo_2"
+            >
 
             <TextView
                 android:id="@+id/tvEmailLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Email"
-                android:textColor="#AAAAAA"
+                android:textColor="@color/texto_sub"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Email"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/texto_cajas"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Usuario"
-                android:textColor="#AAAAAA"
+                android:textColor="@color/texto_sub"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/lineaDatos" />
@@ -126,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Sesión iniciada"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/texto_cajas"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -156,7 +156,7 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_marginBottom="64dp"
-        android:text="Volver"
+        android:text="Ir a la app"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/glEnd"

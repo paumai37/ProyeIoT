@@ -12,13 +12,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="#FFFFFF" />
+        android:textColor="@color/texto_cajas" />
 
     <TextView
         android:id="@+id/tvFecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FFFFFF" />
+        android:textColor="@color/texto_2" />
 
     <ImageButton
         android:layout_width="40dp"
@@ -28,5 +28,5 @@
         android:padding="6dp"
         android:scaleType="fitCenter"
         android:src="@drawable/icono_camara"
-        app:tint="@color/boton_fondo" />
+        app:tint="@color/fondo_3" />
 </LinearLayout>

@@ -1,5 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+
+    <!-- BOTONES -->
+
+
     <!-- Estilo de los botones -->
     <style name="Widget.ProyeIoT.Button" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/boton_fondo</item>
@@ -7,16 +11,14 @@
         <item name="color">@color/color_negro</item>
     </style>
 
-    <!-- BOTONES -->
-
     <style name="boton_1" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/boton_fondo</item>
         <item name="android:textColor">@color/boton_texto</item>
     </style>
 
     <style name="boton_2" parent="Widget.Material3.OverflowLinearLayout">
-        <item name="backgroundTint">@color/boton2_fondo</item>
-        <item name="android:textColor">@color/texto_2</item>
+        <item name="backgroundTint">@color/fondo_1</item>
+        <item name="android:textColor">@color/color_blanco</item>
     </style>
 
     <!-- CAJAS -->
@@ -25,11 +27,37 @@
         <item name="android:textColor">@color/texto_1</item>
     </style>
 
+    <!-- TEXTOS -->
+    <style name="titulo">
+        <item name="android:textColor">@color/color_main</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="subtitulo">
+        <item name="android:textColor">@color/texto_2</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="texto">
+        <item name="android:textColor">@color/texto_3</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="subtexto">
+        <item name="android:textColor">@color/texto_sub</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <!-- Tema base de la app -->
     <style name="Base.Theme.ProyeIoT" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="materialButtonStyle">@style/Widget.ProyeIoT.Button</item>
     </style>
 
-    <style name="Theme.ProyeIoT" parent="Base.Theme.ProyeIoT" />
+    <style name="Theme.ProyeIoT" parent="Base.Theme.ProyeIoT">
+        <item name="android:colorBackground">@color/fondo_1</item>
+        <item name="android:windowBackground">@color/fondo_1</item>
+    </style>
 
 </resources>

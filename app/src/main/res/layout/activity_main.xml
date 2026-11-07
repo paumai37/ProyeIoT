@@ -22,6 +22,7 @@
 
     <!-- Título -->
     <TextView
+        style="@style/titulo"
         android:id="@+id/tvTitulo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -29,9 +30,6 @@
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:text="Inicio de sesión"
-        android:textColor="#D6F8F402"
-        android:textSize="30sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +40,6 @@
         android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginTop="36dp"
-        android:backgroundTint="#FFFFFF"
         android:text="Continuar con Google"
         android:textAllCaps="false"
         android:textColor="#111111"
@@ -94,13 +91,12 @@
 
     <!-- Email -->
     <TextView
+        style="@style/texto"
         android:id="@+id/tvEmailLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Email"
-        android:textColor="#DDDDDD"
-        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/tvO" />
 
@@ -123,20 +119,19 @@
         android:id="@+id/lineaEmail"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#FFFFFF"
+        android:background="@color/fondo_3"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/etEmail" />
 
     <!-- Contraseña -->
     <TextView
+        style="@style/texto"
         android:id="@+id/tvPasswordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Contraseña"
-        android:textColor="#DDDDDD"
-        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/lineaEmail" />
 
@@ -171,7 +166,7 @@
         android:id="@+id/lineaPassword"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#FFFFFF"
+        android:background="@color/fondo_3"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
         app:layout_constraintStart_toStartOf="@id/glStart"
         app:layout_constraintTop_toBottomOf="@id/etPassword" />
@@ -179,13 +174,12 @@
     <!-- ¿Olvidó la contraseña? -->
     <Button
         android:id="@+id/btnRecu"
-        style="?attr/borderlessButtonStyle"
+        style="@style/boton_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="¿Olvidó la contraseña?"
         android:textAllCaps="false"
-        android:textColor="#D6F8F402"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/glEnd"
@@ -211,13 +205,12 @@
 
     <Button
         android:id="@+id/btnGoRegister"
-        style="?attr/borderlessButtonStyle"
+        style="@style/boton_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
         android:text="¿No tienes cuenta? Regístrate"
         android:textAllCaps="false"
-        android:textColor="#D6F8F402"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"

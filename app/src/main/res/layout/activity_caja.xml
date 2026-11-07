@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="end|center_vertical"
                     app:thumbTint="@color/boton_fondo"
-                    app:trackTint="#2B2E33" />
+                    app:trackTint="@color/fondo_2" />
 
                 <!-- Descripción -->
                 <TextView
@@ -57,7 +57,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#2B2E33"
+                    app:cardBackgroundColor="@color/fondo_2"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp">
@@ -68,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:minHeight="100dp"
                         android:padding="16dp"
-                        android:textColor="#FFFFFF" />
+                        android:textColor="@color/texto_cajas" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Usuarios -->
@@ -95,13 +95,13 @@
                         android:contentDescription="Añadir usuario"
                         android:scaleType="fitCenter"
                         android:src="@drawable/icono_anadir"
-                        app:tint="@color/boton_fondo" />
+                        app:tint="@color/fondo_3" />
                 </LinearLayout>
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#2B2E33"
+                    app:cardBackgroundColor="@color/fondo_2"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp">
@@ -111,6 +111,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
+
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Registro -->
@@ -126,7 +127,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#2B2E33"
+                    app:cardBackgroundColor="@color/fondo_2"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp">
@@ -151,7 +152,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#2B2E33"
+                    app:cardBackgroundColor="@color/fondo_2"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp">
@@ -162,7 +163,7 @@
                         android:layout_height="wrap_content"
                         android:minHeight="100dp"
                         android:padding="16dp"
-                        android:textColor="#FFFFFF" />
+                        android:textColor="@color/texto_cajas" />
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>

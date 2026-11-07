@@ -11,13 +11,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="#FFFFFF" />
+        android:textColor="@color/texto_cajas" />
 
     <ImageView
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:src="@drawable/icono_usuario"
-        app:tint="#FFFFFF" />
+        app:tint="@color/fondo_3" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:layout_height="20dp"
             android:scaleType="fitCenter"
             android:src="@drawable/icono_flecha_arriba"
-            app:tint="@color/boton_fondo" />
+            app:tint="@color/fondo_3" />
 
         <ImageView
             android:layout_width="24dp"
@@ -38,7 +38,7 @@
             android:layout_marginTop="4dp"
             android:scaleType="fitCenter"
             android:src="@drawable/icono_flecha_abajo"
-            app:tint="@color/boton_fondo" />
+            app:tint="@color/fondo_3" />
     </LinearLayout>
 
     <ImageButton
@@ -50,5 +50,5 @@
         android:padding="6dp"
         android:scaleType="fitCenter"
         android:src="@drawable/icono_papelera"
-        app:tint="@color/boton_fondo" />
+        app:tint="@color/fondo_3" />
 </LinearLayout>

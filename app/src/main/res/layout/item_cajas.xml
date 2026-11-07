@@ -43,6 +43,7 @@
             android:src="@android:drawable/ic_popup_reminder"
             app:layout_constraintBottom_toBottomOf="@id/btnAcceder"
             app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/fondo_3"
             app:layout_constraintTop_toTopOf="@id/btnAcceder" />
 
         <Button
