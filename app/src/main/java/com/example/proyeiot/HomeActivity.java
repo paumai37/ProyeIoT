@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.auth.UserInfo;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -47,11 +48,23 @@ public class HomeActivity extends AppCompatActivity {
 
         if (user != null) {
             emailTextView.setText(user.getEmail());
+
             String nombre = user.getDisplayName();
+
+            // Si no tiene nombre, buscarlo en los datos del proveedor (Google)
+            if (nombre == null || nombre.isEmpty()) {
+                for (UserInfo info : user.getProviderData()) {
+                    if (info.getDisplayName() != null && !info.getDisplayName().isEmpty()) {
+                        nombre = info.getDisplayName();
+                        break;
+                    }
+                }
+            }
+
             sesiontextView.setText(nombre != null && !nombre.isEmpty() ? nombre : "Sin nombre");
         } else {
             emailTextView.setText("Sin sesión iniciada");
             sesiontextView.setText("-");
         }
     }
-}
+    }

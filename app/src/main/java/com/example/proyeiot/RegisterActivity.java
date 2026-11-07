@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -43,16 +44,27 @@ public class RegisterActivity extends AppCompatActivity {
                     .createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString())
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-
-                            Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show();
+                            FirebaseUser nuevo = FirebaseAuth.getInstance().getCurrentUser();
 
                             UserProfileChangeRequest perfil = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(user)
                                     .build();
-                            FirebaseAuth.getInstance().getCurrentUser().updateProfile(perfil);
 
-                            finish();   // vuelve al login
-                            overridePendingTransition(0, 0);
+                            nuevo.updateProfile(perfil).addOnCompleteListener(t1 ->
+                                    nuevo.sendEmailVerification().addOnCompleteListener(t2 -> {
+                                        if (t2.isSuccessful()) {
+                                            Toast.makeText(this,
+                                                    "Cuenta creada. Revisa tu correo para verificarla",
+                                                    Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(this,
+                                                    "Cuenta creada, pero no se pudo enviar el correo",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                        FirebaseAuth.getInstance().signOut();
+                                        finish();
+                                        overridePendingTransition(0, 0);
+                                    }));
 
                         } else {
                             Toast.makeText(this, "Error: " + task.getException().getMessage(),

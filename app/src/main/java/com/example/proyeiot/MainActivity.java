@@ -15,6 +15,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,16 +35,38 @@ public class MainActivity extends AppCompatActivity {
     void sesiongoogle(View v) {
 
         OAuthProvider.Builder provider = OAuthProvider.newBuilder("google.com");
+        provider.setScopes(Arrays.asList("email", "profile"));   // pide el nombre y el email
 
         FirebaseAuth.getInstance()
                 .startActivityForSignInWithProvider(this, provider.build())
                 .addOnSuccessListener(authResult -> {
-                    startActivity(new Intent(MainActivity.this, MapActivity.class));
-                    overridePendingTransition(0, 0);
-                    finish();
+                    FirebaseUser user = authResult.getUser();
+
+                    // El nombre que manda Google en el login
+                    String nombre = null;
+                    if (authResult.getAdditionalUserInfo() != null
+                            && authResult.getAdditionalUserInfo().getProfile() != null) {
+                        Object n = authResult.getAdditionalUserInfo().getProfile().get("name");
+                        if (n != null) nombre = n.toString();
+                    }
+
+                    if (user != null && nombre != null && !nombre.isEmpty()) {
+                        user.updateProfile(new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(nombre)
+                                        .build())
+                                .addOnCompleteListener(t -> irAlMapa());   // esperar a que se guarde
+                    } else {
+                        irAlMapa();
+                    }
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
+    void irAlMapa() {
+        startActivity(new Intent(MainActivity.this, MapActivity.class));
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     void pgregister (View v) {
@@ -82,9 +107,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
-            if(task.isSuccessful()) {
-
+            if (task.isSuccessful()) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (user != null && !user.isEmailVerified()) {
+                    FirebaseAuth.getInstance().signOut();
+                    Toast.makeText(this, "Verifica tu correo antes de entrar", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 startActivity(new Intent(MainActivity.this, HomeActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
