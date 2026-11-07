@@ -1,28 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="32dp"
-    android:visibility="visible">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
+    <!-- Márgenes laterales de 32dp (sustituyen al padding del raíz) -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glStart"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="32dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="32dp" />
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:text="Inicio de sesión"
         android:textColor="#D6F8F402"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Google -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRegister2"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginTop="36dp"
         android:backgroundTint="#FFFFFF"
@@ -33,52 +50,63 @@
         app:cornerRadius="26dp"
         app:iconGravity="textStart"
         app:iconPadding="12dp"
-        app:iconTint="@null" />
+        app:iconTint="@null"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toBottomOf="@id/tvTitulo" />
 
     <!-- Separador con "o" -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tvO"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:fontFamily="sans-serif"
+        android:text="o"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnRegister2" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:background="#444444" />
+    <View
+        android:id="@+id/lineaOIzq"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginEnd="16dp"
+        android:background="#444444"
+        app:layout_constraintBottom_toBottomOf="@id/tvO"
+        app:layout_constraintEnd_toStartOf="@id/tvO"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toTopOf="@id/tvO" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:fontFamily="sans-serif"
-            android:text="o"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="italic" />
+    <View
+        android:id="@+id/lineaODer"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:background="#444444"
+        app:layout_constraintBottom_toBottomOf="@id/tvO"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toEndOf="@id/tvO"
+        app:layout_constraintTop_toTopOf="@id/tvO" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:background="#444444" />
-    </LinearLayout>
-
+    <!-- Email -->
     <TextView
+        android:id="@+id/tvEmailLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Email"
         android:textColor="#DDDDDD"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toBottomOf="@id/tvO" />
 
-    <!-- Campo de Email con línea inferior -->
     <EditText
         android:id="@+id/etEmail"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginTop="6dp"
         android:background="@android:color/transparent"
@@ -86,93 +114,113 @@
         android:inputType="textEmailAddress"
         android:paddingHorizontal="4dp"
         android:textColor="#FFFFFF"
-        android:textColorHint="#777777" />
+        android:textColorHint="#777777"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toBottomOf="@id/tvEmailLabel" />
 
     <View
-        android:layout_width="match_parent"
+        android:id="@+id/lineaEmail"
+        android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#FFFFFF" />
+        android:background="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toBottomOf="@id/etEmail" />
 
+    <!-- Contraseña -->
     <TextView
+        android:id="@+id/tvPasswordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Contraseña"
         android:textColor="#DDDDDD"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toBottomOf="@id/lineaEmail" />
 
-    <!-- Contenedor de Contraseña con línea inferior exacta al Email -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp">
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:background="@android:color/transparent"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:paddingStart="4dp"
+        android:paddingEnd="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#777777"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel" />
 
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:hint="Contraseña"
-            android:inputType="textPassword"
-            android:paddingHorizontal="4dp"
-            android:paddingEnd="48dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#777777" />
-
-        <ImageView
-            android:id="@+id/btnTogglePassword"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#CCCCCC" />
-    </FrameLayout>
+    <ImageView
+        android:id="@+id/btnTogglePassword"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toBottomOf="@id/etPassword"
+        app:layout_constraintEnd_toEndOf="@id/etPassword"
+        app:layout_constraintTop_toTopOf="@id/etPassword"
+        app:tint="#CCCCCC" />
 
     <View
-        android:layout_width="match_parent"
+        android:id="@+id/lineaPassword"
+        android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#FFFFFF" />
+        android:background="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toBottomOf="@id/etPassword" />
 
+    <!-- ¿Olvidó la contraseña? -->
     <Button
         android:id="@+id/btnRecu"
         style="?attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:layout_marginTop="4dp"
         android:text="¿Olvidó la contraseña?"
         android:textAllCaps="false"
         android:textColor="#D6F8F402"
         android:textSize="15sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintTop_toBottomOf="@id/lineaPassword" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+    <!-- Botones de abajo -->
 
     <com.google.android.material.button.MaterialButton
-        style="@style/boton_1"
         android:id="@+id/btnLogin"
+        style="@style/boton_1"
         android:layout_width="200dp"
         android:layout_height="56dp"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
         android:text="Entrar"
         android:textAllCaps="false"
         android:textSize="17sp"
         android:textStyle="bold"
-        app:cornerRadius="28dp" />
+        app:cornerRadius="28dp"
+        app:layout_constraintBottom_toTopOf="@id/btnGoRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnGoRegister"
         style="?attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="56dp"
         android:text="¿No tienes cuenta? Regístrate"
         android:textAllCaps="false"
-        android:textColor="#D6F8F402" />
+        android:textColor="#D6F8F402"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

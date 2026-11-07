@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
         findViewById(R.id.btnRecu).setOnClickListener(this::unknownpassword);
-
     }
 
 
