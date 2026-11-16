@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     app:cardBackgroundColor="@color/color_blanco"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
     app:strokeWidth="0dp"
     >
 
@@ -59,11 +60,16 @@
             app:layout_constraintStart_toEndOf="@id/ivNotificacion"
             app:layout_constraintTop_toBottomOf="@id/tvCaja" />
 
-        <View
+        <TextView
             android:id="@+id/vRol"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/circulo_rol"
+            android:background="@drawable/circulo_rol_usuario"
+            android:gravity="center"
+            android:text="U"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/btnAcceder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/btnAcceder" />

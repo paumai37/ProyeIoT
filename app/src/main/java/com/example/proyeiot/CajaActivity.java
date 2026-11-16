@@ -49,12 +49,23 @@ public class CajaActivity extends AppCompatActivity {
         LinearLayout contUsuarios = findViewById(R.id.rvUsuarios);
 
         List<Usuario> usuarios = new ArrayList<>();
-        usuarios.add(new Usuario("Sergio Benitez Ivars"));
-        usuarios.add(new Usuario("Miguel Gonzalez Moià"));
+        usuarios.add(new Usuario("Sergio Benitez Ivars", "ADMIN"));
+        usuarios.add(new Usuario("Miguel Gonzalez Moià", "USUARIO"));
 
         for (Usuario u : usuarios) {
             View fila = getLayoutInflater().inflate(R.layout.item_usuario, contUsuarios, false);
             ((TextView) fila.findViewById(R.id.tvNombre)).setText(u.nombre);
+
+            // Círculo según el rol: ADMIN = azul con "A", USUARIO = verde con "U"
+            TextView circulo = fila.findViewById(R.id.tvRolCirculo);
+            if ("ADMIN".equals(u.rol)) {
+                circulo.setText("A");
+                circulo.setBackgroundResource(R.drawable.circulo_rol_admin);
+            } else {
+                circulo.setText("U");
+                circulo.setBackgroundResource(R.drawable.circulo_rol_usuario);
+            }
+
             contUsuarios.addView(fila);
         }
 
