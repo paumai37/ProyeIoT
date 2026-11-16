@@ -5,16 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/color_blanco"
-    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="@color/fondo_2"
+    app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
-    app:strokeWidth="0dp"
-    >
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        style="@style/caja_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:padding="12dp">
 
         <TextView
@@ -22,6 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Caja X"
+            android:textColor="@color/texto_1"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -32,24 +32,14 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Rol"
+            android:textColor="@color/texto_1"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/ivNotificacion"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:contentDescription="Notificaciones"
-            android:src="@android:drawable/ic_popup_reminder"
-            app:layout_constraintBottom_toBottomOf="@id/btnAcceder"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tint="@color/fondo_3"
-            app:layout_constraintTop_toTopOf="@id/btnAcceder" />
-
         <Button
-            style="@style/boton_1"
             android:id="@+id/btnAcceder"
+            style="@style/boton_1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -57,7 +47,7 @@
             android:layout_marginEnd="16dp"
             android:text="Acceder"
             app:layout_constraintEnd_toStartOf="@id/vRol"
-            app:layout_constraintStart_toEndOf="@id/ivNotificacion"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvCaja" />
 
         <TextView
