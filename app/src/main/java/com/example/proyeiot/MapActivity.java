@@ -50,15 +50,15 @@ public class MapActivity extends AppCompatActivity {
         // Atribución del mapa
         map.getOverlays().add(new CopyrightOverlay(this));
 
-        // Cambia estas coordenadas por las tuyas
         GeoPoint caja1 = new GeoPoint(38.928765786041595, -0.1877644473806444);
         GeoPoint caja2 = new GeoPoint(38.99632678834556, -0.16609262781082546);
-
+        GeoPoint caja3 = new GeoPoint(38.8224, -0.6068);
         map.getController().setZoom(15.0);
         map.getController().setCenter(caja1);
 
         anadirMarcador(caja1, "Caja 1");
         anadirMarcador(caja2, "Caja 2");
+        anadirMarcador(caja3, "Caja 3");
 
         // Barra inferior
         BottomNavigationView nav = findViewById(R.id.bottomNav);
