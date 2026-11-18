@@ -27,16 +27,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         findViewById(R.id.btnGoRegister).setOnClickListener(this::pgregister);
         findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
         findViewById(R.id.btnRecu).setOnClickListener(this::unknownpassword);
-
-
     }
-
-
 
     void sesiongoogle(View v) {
 
