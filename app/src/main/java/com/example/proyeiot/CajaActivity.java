@@ -3,6 +3,7 @@ package com.example.proyeiot;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -24,6 +25,10 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +40,13 @@ public class CajaActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private String cajaId;
+
+    //Detector
+    private static final String TAG = "UDP";
+    private static final int PUERTO = 5005;
+    private UdpReceiver receptor;
+    private SwitchCompat switchEscucha;
+    private volatile boolean recibiendoDatos = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +80,8 @@ public class CajaActivity extends AppCompatActivity {
         findViewById(R.id.tvDescripcion).setOnClickListener(v -> editarDescripcion());
         findViewById(R.id.btnAnadirUsuario).setOnClickListener(v -> anadirUsuario());
 
+        switchEscucha = findViewById(R.id.switchBloquear);
+
         // Barra inferior
         BottomNavigationView nav = findViewById(R.id.bottomNav);
         nav.setSelectedItemId(R.id.nav_cajas);   // antes del listener, para no dispararlo
@@ -88,7 +102,63 @@ public class CajaActivity extends AppCompatActivity {
             }
             return true;
         });
+
+        receptor = new UdpReceiver(PUERTO, new UdpReceiver.Listener() {
+            @Override
+            public void alRecibir(String mensaje, String ipOrigen) {
+                recibiendoDatos = true;
+                Log.d(TAG, ipOrigen + " → " + mensaje);
+            }
+
+            @Override
+            public void alFallar(Exception e) {
+                Toast.makeText(CajaActivity.this,
+                        "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                switchEscucha.setChecked(false);
+            }
+        });
+
+        switchEscucha.setOnCheckedChangeListener((buttonView, activado) -> {
+            if (activado) {
+                receptor.iniciar();
+                buscarSensor();
+                switchEscucha.setText("Escuchando en el puerto " + PUERTO);
+            } else {
+                receptor.detener();
+                switchEscucha.setText("Escucha desactivada");
+            }
+        });
     }
+
+
+
+    private void buscarSensor() {
+        recibiendoDatos = false;
+        new Thread(() -> {
+            try (DatagramSocket s = new DatagramSocket()) {
+                s.setBroadcast(true);
+                byte[] hola = "HOLA".getBytes(StandardCharsets.UTF_8);
+                DatagramPacket p = new DatagramPacket(
+                        hola, hola.length,
+                        InetAddress.getByName("255.255.255.255"), 4210);
+
+                for (int i = 0; i < 15 && !recibiendoDatos; i++) {
+                    s.send(p);
+                    Thread.sleep(2000);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error buscando sensor", e);
+            }
+        }).start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        switchEscucha.setChecked(false);
+    }
+
+
 
     // Descripción, interruptor, objetos y usuarios
     private void cargarCaja() {
