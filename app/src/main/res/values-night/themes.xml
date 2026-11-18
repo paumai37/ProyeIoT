@@ -13,7 +13,7 @@
 
     <style name="boton_1" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/boton_fondo</item>
-        <item name="android:textColor">@color/boton_texto</item>
+        <item name="android:textColor">@color/color_negro</item>
     </style>
 
     <style name="boton_2" parent="Widget.Material3.OverflowLinearLayout">

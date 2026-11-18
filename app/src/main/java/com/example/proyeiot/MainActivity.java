@@ -1,8 +1,10 @@
 package com.example.proyeiot;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,11 +27,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         findViewById(R.id.btnGoRegister).setOnClickListener(this::pgregister);
         findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
         findViewById(R.id.btnRecu).setOnClickListener(this::unknownpassword);
+
+
     }
+
 
 
     void sesiongoogle(View v) {

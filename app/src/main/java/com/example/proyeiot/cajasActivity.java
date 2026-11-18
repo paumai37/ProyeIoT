@@ -1,10 +1,12 @@
 package com.example.proyeiot;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -128,6 +130,38 @@ public class cajasActivity extends AppCompatActivity {
             // nav_cajas: ya estás aquí, no hace nada
             return true;
         });
+
+        findViewById(R.id.fabAnadir).setOnClickListener(this::popupCrearCaja);
+
+    }
+
+
+    void popupCrearCaja(View v) {
+        View vista = getLayoutInflater().inflate(R.layout.popup_crear_caja, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(vista)
+                .create();
+
+        EditText etCodigo = vista.findViewById(R.id.etCodigo);
+        Button btnAceptar = vista.findViewById(R.id.btnAceptar);
+        Button btnCancelar = vista.findViewById(R.id.btnCancelar);
+
+        btnAceptar.setOnClickListener(b -> {
+            String codigo = etCodigo.getText().toString().trim();
+
+            if (codigo.isEmpty()) {
+                etCodigo.setError("Escribe un código");
+                return;
+            }
+
+            // Aquí creas la caja con ese código
+            dialog.dismiss();
+        });
+
+        btnCancelar.setOnClickListener(b -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void filtrar(String texto) {
