@@ -45,7 +45,7 @@ public class CajaActivity extends AppCompatActivity {
     private static final String TAG = "UDP";
     private static final int PUERTO = 5005;
     private UdpReceiver receptor;
-    private SwitchCompat switchEscucha;          // switch PROPIO de la escucha (no es el de bloquear)
+    private SwitchCompat switchEscucha;
     private volatile boolean recibiendoDatos = false;
 
     @Override
