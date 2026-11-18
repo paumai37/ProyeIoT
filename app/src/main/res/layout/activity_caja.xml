@@ -1,216 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:layout_width="match_parent"
+    <ScrollView
+        android:id="@+id/scrollCaja"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvNombreCaja"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:gravity="center"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toStartOf="@id/btnEditarNombre"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btnEditarNombre"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Editar nombre"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icono_pincel"
+                app:layout_constraintBottom_toBottomOf="@id/tvNombreCaja"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvNombreCaja"
+                app:layout_constraintTop_toTopOf="@id/tvNombreCaja"
+                app:tint="@color/fondo_3" />
 
-                    <TextView
-                        android:id="@+id/tvNombreCaja"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="36sp"
-                        android:textStyle="bold" />
+            <!-- Bloquear -->
+            <TextView
+                android:id="@+id/tvBloquearLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="Bloquear caja"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvNombreCaja" />
 
-                    <ImageButton
-                        android:id="@+id/btnEditarNombre"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="Editar nombre"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/icono_pincel"
-                        app:tint="@color/fondo_3" />
-                </LinearLayout>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchBloquear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end|center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvBloquearLabel"
+                app:thumbTint="@color/boton_fondo"
+                app:trackTint="@color/fondo_2" />
+
+            <!-- Descripción: el pincel va pegado al título -->
+            <TextView
+                android:id="@+id/tvTituloDescripcion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Descripción"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnEditarDescripcion"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switchBloquear" />
+
+            <ImageButton
+                android:id="@+id/btnEditarDescripcion"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Editar descripción"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icono_pincel"
+                app:layout_constraintBottom_toBottomOf="@id/tvTituloDescripcion"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/tvTituloDescripcion"
+                app:layout_constraintTop_toTopOf="@id/tvTituloDescripcion"
+                app:tint="@color/fondo_3" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDescripcion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/fondo_2"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTituloDescripcion"
+                app:strokeWidth="0dp">
 
                 <TextView
+                    android:id="@+id/tvDescripcion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="Bloquear caja"
-                    android:textStyle="bold" />
+                    android:minHeight="100dp"
+                    android:padding="16dp"
+                    android:textColor="@color/texto_cajas" />
+            </com.google.android.material.card.MaterialCardView>
 
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchBloquear"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="end|center_vertical"
-                    app:thumbTint="@color/boton_fondo"
-                    app:trackTint="@color/fondo_2" />
+            <ImageButton
+                android:id="@+id/btnAnadirUsuario"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Añadir usuario"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icono_anadir"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardDescripcion"
+                app:tint="@color/fondo_3" />
 
-                <!-- Descripción -->
+            <TextView
+                android:id="@+id/tvTituloUsuarios"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Usuarios"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btnAnadirUsuario"
+                app:layout_constraintEnd_toStartOf="@id/btnAnadirUsuario"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btnAnadirUsuario" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardUsuarios"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/fondo_2"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnAnadirUsuario"
+                app:strokeWidth="0dp">
+
                 <LinearLayout
+                    android:id="@+id/rvUsuarios"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical" />
+            </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Descripción"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvTituloRegistro"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Registro"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardUsuarios" />
 
-                    <ImageButton
-                        android:id="@+id/btnEditarDescripcion"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="Editar descripción"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/icono_pincel"
-                        app:tint="@color/fondo_3" />
-                </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRegistro"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/fondo_2"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTituloRegistro"
+                app:strokeWidth="0dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/fondo_2"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="0dp">
-
-                    <TextView
-                        android:id="@+id/tvDescripcion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="100dp"
-                        android:padding="16dp"
-                        android:textColor="@color/texto_cajas" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Usuarios -->
                 <LinearLayout
+                    android:id="@+id/rvRegistro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical" />
+            </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Usuarios"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvTituloObjetos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Objetos detectados segun IA"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardRegistro" />
 
-                    <ImageButton
-                        android:id="@+id/btnAnadirUsuario"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="Añadir usuario"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/icono_anadir"
-                        app:tint="@color/fondo_3" />
-                </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardObjetos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/fondo_2"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTituloObjetos"
+                app:strokeWidth="0dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/fondo_2"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="0dp">
-
-                    <LinearLayout
-                        android:id="@+id/rvUsuarios"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Registro -->
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Registro"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/tvObjetos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/fondo_2"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="0dp">
+                    android:minHeight="100dp"
+                    android:padding="16dp"
+                    android:textColor="@color/texto_cajas" />
+            </com.google.android.material.card.MaterialCardView>
 
-                    <LinearLayout
-                        android:id="@+id/rvRegistro"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Objetos detectados -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Objetos detectados segun IA"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/fondo_2"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="0dp">
-
-                    <TextView
-                        android:id="@+id/tvObjetos"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="100dp"
-                        android:padding="16dp"
-                        android:textColor="@color/texto_cajas" />
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
-        </ScrollView>
-    </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_inferior" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
