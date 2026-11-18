@@ -42,6 +42,8 @@ public class CajaActivity extends AppCompatActivity {
     private String cajaId;
 
     // Detector (UDP)
+    private static final String CODIGO_SENSOR = "C0FDCD32";
+    private boolean sensorDetectado = false;
     private static final String TAG = "UDP";
     private static final int PUERTO = 5005;
     private UdpReceiver receptor;
@@ -88,6 +90,12 @@ public class CajaActivity extends AppCompatActivity {
             public void alRecibir(String mensaje, String ipOrigen) {
                 recibiendoDatos = true;
                 Log.d(TAG, ipOrigen + " → " + mensaje);
+
+                if (CODIGO_SENSOR.equals(mensaje) && !sensorDetectado) {
+                    sensorDetectado = true;   // para que no salga el Toast en cada paquete
+                    Toast.makeText(CajaActivity.this,
+                            "Sensor detectado", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -100,6 +108,7 @@ public class CajaActivity extends AppCompatActivity {
 
         switchEscucha.setOnCheckedChangeListener((buttonView, activado) -> {
             if (activado) {
+                sensorDetectado = false;
                 receptor.iniciar();
                 buscarSensor();
                 switchEscucha.setText("Escuchando en el puerto " + PUERTO);
