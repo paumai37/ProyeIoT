@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -281,6 +282,10 @@ public class CajaActivity extends AppCompatActivity {
             fila.findViewById(R.id.btnSubirRol).setOnClickListener(v -> cambiarRol(uid, "ADMIN", roles));
             fila.findViewById(R.id.btnBajarRol).setOnClickListener(v -> cambiarRol(uid, "USUARIO", roles));
 
+            // Papelera -> quitar al usuario de la caja (pide confirmación)
+            fila.findViewById(R.id.btnEliminarUsuario).setOnClickListener(v ->
+                    confirmarEliminar(uid, tvNombre.getText().toString(), roles));
+
             db.collection("usuarios").document(uid).get()
                     .addOnSuccessListener(this, u -> {
                         String n = u.getString("nombre");
@@ -420,6 +425,47 @@ public class CajaActivity extends AppCompatActivity {
                 .addOnSuccessListener(x -> cargarCaja())   // refresca los círculos A/U
                 .addOnFailureListener(e -> Toast.makeText(this,
                         "No se pudo cambiar el rol: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
+    // Pregunta antes de quitar a un usuario de la caja
+    private void confirmarEliminar(String uid, String nombre, Map<String, String> roles) {
+        String rol = (roles != null && roles.get(uid) != null) ? roles.get(uid) : "USUARIO";
+
+        // Nunca dejar la caja sin ningún admin
+        if ("ADMIN".equals(rol) && roles != null) {
+            int admins = 0;
+            for (String r : roles.values()) if ("ADMIN".equals(r)) admins++;
+            if (admins <= 1) {
+                Toast.makeText(this, "No puedes eliminar al único admin de la caja",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Eliminar usuario")
+                .setMessage("¿Quitar a " + nombre + " de esta caja?")
+                .setPositiveButton("Eliminar", (d, w) -> eliminarMiembro(uid))
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    // Quita el UID de miembros y borra su rol en cajas/{id}
+    private void eliminarMiembro(String uid) {
+        db.collection("cajas").document(cajaId).update(
+                        "miembros", FieldValue.arrayRemove(uid),
+                        "roles." + uid, FieldValue.delete())
+                .addOnSuccessListener(x -> {
+                    Toast.makeText(this, "Usuario eliminado", Toast.LENGTH_SHORT).show();
+                    // Si el admin se quitó a sí mismo, ya no tiene acceso a esta pantalla
+                    if (uid.equals(FirebaseAuth.getInstance().getUid())) {
+                        finish();
+                    } else {
+                        cargarCaja();   // refresca la lista
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(this,
+                        "No se pudo eliminar: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     // Últimos 20 accesos, el más reciente primero
