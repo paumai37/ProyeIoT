@@ -81,7 +81,7 @@ public class CajaActivity extends AppCompatActivity {
         findViewById(R.id.btnAnadirUsuario).setOnClickListener(v -> anadirUsuario());
 
         // --- Escucha UDP del sensor (switch independiente del de bloquear) ---
-        switchEscucha = findViewById(R.id.switchEscucha);
+        switchEscucha = findViewById(R.id.switchBloquear);
 
         receptor = new UdpReceiver(PUERTO, new UdpReceiver.Listener() {
             @Override
