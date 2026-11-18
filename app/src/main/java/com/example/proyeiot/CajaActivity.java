@@ -1,8 +1,11 @@
 package com.example.proyeiot;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -25,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class CajaActivity extends AppCompatActivity {
 
@@ -55,6 +60,13 @@ public class CajaActivity extends AppCompatActivity {
             cargarCaja();
             cargarRegistro();
         }
+
+        // --- Edición (solo ADMIN llega a esta pantalla) ---
+        findViewById(R.id.btnEditarNombre).setOnClickListener(v -> editarNombre());
+        findViewById(R.id.tvNombreCaja).setOnClickListener(v -> editarNombre());
+        findViewById(R.id.btnEditarDescripcion).setOnClickListener(v -> editarDescripcion());
+        findViewById(R.id.tvDescripcion).setOnClickListener(v -> editarDescripcion());
+        findViewById(R.id.btnAnadirUsuario).setOnClickListener(v -> anadirUsuario());
 
         // Barra inferior
         BottomNavigationView nav = findViewById(R.id.bottomNav);
@@ -160,6 +172,10 @@ public class CajaActivity extends AppCompatActivity {
 
             contUsuarios.addView(fila);
 
+            // Flecha arriba -> ADMIN, flecha abajo -> USUARIO
+            fila.findViewById(R.id.btnSubirRol).setOnClickListener(v -> cambiarRol(uid, "ADMIN", roles));
+            fila.findViewById(R.id.btnBajarRol).setOnClickListener(v -> cambiarRol(uid, "USUARIO", roles));
+
             db.collection("usuarios").document(uid).get()
                     .addOnSuccessListener(this, u -> {
                         String n = u.getString("nombre");
@@ -167,6 +183,138 @@ public class CajaActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(this, e -> tvNombre.setText("Sin nombre"));
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Edición
+    // ------------------------------------------------------------------
+
+    // Diálogo genérico con un campo de texto
+    private void dialogoTexto(String titulo, String valorActual, boolean multilinea,
+                              Consumer<String> alAceptar) {
+        EditText et = new EditText(this);
+        et.setText(valorActual);
+        et.setSelection(et.getText().length());
+        if (multilinea) {
+            et.setMinLines(3);
+            et.setGravity(android.view.Gravity.TOP);
+        } else {
+            et.setSingleLine(true);
+        }
+
+        FrameLayout marco = new FrameLayout(this);
+        int p = (int) (20 * getResources().getDisplayMetrics().density);
+        marco.setPadding(p, p / 2, p, 0);
+        marco.addView(et);
+
+        new AlertDialog.Builder(this)
+                .setTitle(titulo)
+                .setView(marco)
+                .setPositiveButton("Guardar", (d, w) -> alAceptar.accept(et.getText().toString().trim()))
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void editarNombre() {
+        if (cajaId == null) return;
+        TextView tv = findViewById(R.id.tvNombreCaja);
+        dialogoTexto("Nombre de la caja", tv.getText().toString(), false, nuevo -> {
+            if (nuevo.isEmpty()) {
+                Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            db.collection("cajas").document(cajaId).update("nombre", nuevo)
+                    .addOnSuccessListener(x -> tv.setText(nuevo))
+                    .addOnFailureListener(e -> Toast.makeText(this,
+                            "No se pudo guardar: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        });
+    }
+
+    private void editarDescripcion() {
+        if (cajaId == null) return;
+        TextView tv = findViewById(R.id.tvDescripcion);
+        dialogoTexto("Descripción", tv.getText().toString(), true, nuevo ->
+                db.collection("cajas").document(cajaId).update("descripcion", nuevo)
+                        .addOnSuccessListener(x -> tv.setText(nuevo))
+                        .addOnFailureListener(e -> Toast.makeText(this,
+                                "No se pudo guardar: " + e.getMessage(), Toast.LENGTH_LONG).show()));
+    }
+
+    // Busca al usuario por email en usuarios/ y lo añade a miembros con rol USUARIO
+    private void anadirUsuario() {
+        if (cajaId == null) return;
+        dialogoTexto("Añadir usuario (email)", "", false, email -> {
+            if (email.isEmpty()) return;
+
+            db.collection("usuarios").whereEqualTo("email", email).limit(1).get()
+                    .addOnSuccessListener(snap -> {
+                        if (!snap.isEmpty()) {
+                            agregarMiembro(snap.getDocuments().get(0).getId());
+                            return;
+                        }
+                        // Segundo intento en minúsculas
+                        db.collection("usuarios")
+                                .whereEqualTo("email", email.toLowerCase(Locale.ROOT))
+                                .limit(1).get()
+                                .addOnSuccessListener(snap2 -> {
+                                    if (snap2.isEmpty()) {
+                                        Toast.makeText(this, "No existe ningún usuario con ese email",
+                                                Toast.LENGTH_LONG).show();
+                                    } else {
+                                        agregarMiembro(snap2.getDocuments().get(0).getId());
+                                    }
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(this,
+                                        "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this,
+                            "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        });
+    }
+
+    private void agregarMiembro(String uidNuevo) {
+        db.collection("cajas").document(cajaId).get().addOnSuccessListener(d -> {
+            List<String> miembros = (List<String>) d.get("miembros");
+            if (miembros != null && miembros.contains(uidNuevo)) {
+                Toast.makeText(this, "Ese usuario ya está en la caja", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            db.collection("cajas").document(cajaId).update(
+                            "miembros", FieldValue.arrayUnion(uidNuevo),
+                            "roles." + uidNuevo, "USUARIO")
+                    .addOnSuccessListener(x -> {
+                        Toast.makeText(this, "Usuario añadido", Toast.LENGTH_SHORT).show();
+                        cargarCaja();   // refresca la lista de usuarios
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this,
+                            "No se pudo añadir: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        }).addOnFailureListener(e -> Toast.makeText(this,
+                "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
+    // Cambia el rol de un miembro y lo guarda en cajas/{id}.roles.{uid}
+    private void cambiarRol(String uid, String nuevoRol, Map<String, String> roles) {
+        String actual = (roles != null && roles.get(uid) != null) ? roles.get(uid) : "USUARIO";
+        if (actual.equals(nuevoRol)) {
+            Toast.makeText(this, "Ya es " + nuevoRol, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Nunca dejar la caja sin ningún admin
+        if ("USUARIO".equals(nuevoRol) && roles != null) {
+            int admins = 0;
+            for (String r : roles.values()) if ("ADMIN".equals(r)) admins++;
+            if (admins <= 1) {
+                Toast.makeText(this, "La caja tiene que tener al menos un admin",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        db.collection("cajas").document(cajaId).update("roles." + uid, nuevoRol)
+                .addOnSuccessListener(x -> cargarCaja())   // refresca los círculos A/U
+                .addOnFailureListener(e -> Toast.makeText(this,
+                        "No se pudo cambiar el rol: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     // Últimos 20 accesos, el más reciente primero
