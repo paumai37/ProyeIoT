@@ -20,10 +20,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -127,13 +132,81 @@ public class cajasActivity extends AppCompatActivity {
             }
 
             // Aquí creas la caja con ese código
-            dialog.dismiss();
+            if (codigo.contains("/") || codigo.equals(".") || codigo.equals("..")
+                    || codigo.startsWith("__")) {
+                etCodigo.setError("Código no válido (sin \"/\" y sin empezar por \"__\")");
+                return;
+            }
+
+            btnAceptar.setEnabled(false);   // evita dobles pulsaciones mientras se procesa
+            entrarOCrearCaja(codigo, dialog, btnAceptar);
         });
 
         btnCancelar.setOnClickListener(b -> dialog.dismiss());
 
         dialog.show();
     }
+
+    // Si existe cajas/{codigo}: te añade como ADMIN.
+    // Si no existe: la crea con ese id y te deja como único miembro y ADMIN.
+    private void entrarOCrearCaja(String codigo, AlertDialog dialog, Button btnAceptar) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference ref = db.collection("cajas").document(codigo);
+
+        db.runTransaction(tr -> {
+                    DocumentSnapshot d = tr.get(ref);
+
+                    if (!d.exists()) {
+                        Map<String, Object> caja = new HashMap<>();
+                        caja.put("nombre", "Mi caja");
+                        caja.put("descripcion", "La descripción de mi caja");
+                        caja.put("bloqueada", false);
+                        caja.put("objetos", new ArrayList<String>());
+                        caja.put("miembros", new ArrayList<>(Collections.singletonList(uid)));
+                        caja.put("roles", Collections.singletonMap(uid, "ADMIN"));
+                        tr.set(ref, caja);
+                        return "CREADA";
+                    }
+
+                    List<String> miembros = (List<String>) d.get("miembros");
+                    Map<String, String> roles = (Map<String, String>) d.get("roles");
+                    boolean esMiembro = miembros != null && miembros.contains(uid);
+                    boolean esAdmin = roles != null && "ADMIN".equals(roles.get(uid));
+                    if (esMiembro && esAdmin) return "YA_ADMIN";
+
+                    tr.update(ref,
+                            "miembros", FieldValue.arrayUnion(uid),
+                            "roles." + uid, "ADMIN");
+                    return "UNIDO";
+                })
+                .addOnSuccessListener(this, resultado -> {
+                    switch (resultado) {
+                        case "CREADA":
+                            Toast.makeText(this, "Caja creada. Eres ADMIN", Toast.LENGTH_SHORT).show();
+                            break;
+                        case "UNIDO":
+                            Toast.makeText(this, "Te has unido a la caja como ADMIN", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(this, "Ya eres ADMIN de esta caja", Toast.LENGTH_SHORT).show();
+                    }
+                    dialog.dismiss();
+                    cargarCajas();   // refresca la lista para que aparezca
+                })
+                .addOnFailureListener(this, e -> {
+                    btnAceptar.setEnabled(true);
+                    boolean sinPermisos = e instanceof FirebaseFirestoreException
+                            && ((FirebaseFirestoreException) e).getCode()
+                            == FirebaseFirestoreException.Code.PERMISSION_DENIED;
+                    Toast.makeText(this,
+                            sinPermisos ? "Sin permisos: revisa las reglas de Firestore"
+                                    : "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                });
+    }
+
+
 
     // Carga de Firestore las cajas donde el usuario actual es miembro
     private void cargarCajas() {
