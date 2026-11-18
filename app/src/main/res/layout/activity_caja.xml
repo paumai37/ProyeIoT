@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
+            <!-- Nombre: el pincel va pegado al texto, todo centrado -->
             <TextView
                 android:id="@+id/tvNombreCaja"
                 android:layout_width="wrap_content"
@@ -70,6 +71,30 @@
                 app:thumbTint="@color/boton_fondo"
                 app:trackTint="@color/fondo_2" />
 
+            <!-- Escucha del sensor (UDP) -->
+            <TextView
+                android:id="@+id/tvEscuchaLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="end"
+                android:text="Escucha del sensor"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switchBloquear" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchEscucha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end|center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvEscuchaLabel"
+                app:thumbTint="@color/boton_fondo"
+                app:trackTint="@color/fondo_2" />
+
             <!-- Descripción: el pincel va pegado al título -->
             <TextView
                 android:id="@+id/tvTituloDescripcion"
@@ -83,7 +108,7 @@
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switchBloquear" />
+                app:layout_constraintTop_toBottomOf="@id/switchEscucha" />
 
             <ImageButton
                 android:id="@+id/btnEditarDescripcion"

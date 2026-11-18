@@ -41,11 +41,11 @@ public class CajaActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String cajaId;
 
-    //Detector
+    // Detector (UDP)
     private static final String TAG = "UDP";
     private static final int PUERTO = 5005;
     private UdpReceiver receptor;
-    private SwitchCompat switchEscucha;
+    private SwitchCompat switchEscucha;          // switch PROPIO de la escucha (no es el de bloquear)
     private volatile boolean recibiendoDatos = false;
 
     @Override
@@ -80,28 +80,8 @@ public class CajaActivity extends AppCompatActivity {
         findViewById(R.id.tvDescripcion).setOnClickListener(v -> editarDescripcion());
         findViewById(R.id.btnAnadirUsuario).setOnClickListener(v -> anadirUsuario());
 
-        switchEscucha = findViewById(R.id.switchBloquear);
-
-        // Barra inferior
-        BottomNavigationView nav = findViewById(R.id.bottomNav);
-        nav.setSelectedItemId(R.id.nav_cajas);   // antes del listener, para no dispararlo
-
-        nav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_mapa) {
-                startActivity(new Intent(CajaActivity.this, MapActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-            } else if (id == R.id.nav_ajustes) {
-                startActivity(new Intent(CajaActivity.this, AjustesActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-            } else if (id == R.id.nav_cajas) {
-                finish();   // vuelve a la lista de cajas
-            }
-            return true;
-        });
+        // --- Escucha UDP del sensor (switch independiente del de bloquear) ---
+        switchEscucha = findViewById(R.id.switchEscucha);
 
         receptor = new UdpReceiver(PUERTO, new UdpReceiver.Listener() {
             @Override
@@ -128,9 +108,28 @@ public class CajaActivity extends AppCompatActivity {
                 switchEscucha.setText("Escucha desactivada");
             }
         });
+
+        // Barra inferior
+        BottomNavigationView nav = findViewById(R.id.bottomNav);
+        nav.setSelectedItemId(R.id.nav_cajas);   // antes del listener, para no dispararlo
+
+        nav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_mapa) {
+                startActivity(new Intent(CajaActivity.this, MapActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            } else if (id == R.id.nav_ajustes) {
+                startActivity(new Intent(CajaActivity.this, AjustesActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            } else if (id == R.id.nav_cajas) {
+                finish();   // vuelve a la lista de cajas
+            }
+            return true;
+        });
     }
-
-
 
     private void buscarSensor() {
         recibiendoDatos = false;
@@ -155,10 +154,15 @@ public class CajaActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Solo apaga la escucha; ya NO toca el switch de bloquear (no escribe en Firestore)
         switchEscucha.setChecked(false);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (receptor != null) receptor.detener();
+    }
 
     // Descripción, interruptor, objetos y usuarios
     private void cargarCaja() {
