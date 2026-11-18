@@ -1,25 +1,23 @@
 package com.example.proyeiot;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +29,23 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
         findViewById(R.id.btnRecu).setOnClickListener(this::unknownpassword);
+    }
+
+    // Guarda/actualiza al usuario en Firestore: usuarios/{uid}
+    void guardarUsuario(FirebaseUser user, String nombre, Runnable alTerminar) {
+        if (user == null) {
+            alTerminar.run();
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("nombre", nombre != null ? nombre : "");
+        datos.put("email", user.getEmail() != null ? user.getEmail() : "");
+
+        FirebaseFirestore.getInstance()
+                .collection("usuarios")
+                .document(user.getUid())
+                .set(datos, SetOptions.merge())
+                .addOnCompleteListener(t -> alTerminar.run());   // siga bien o mal, la app continúa
     }
 
     void sesiongoogle(View v) {
@@ -51,13 +66,18 @@ public class MainActivity extends AppCompatActivity {
                         if (n != null) nombre = n.toString();
                     }
 
+                    final String nombreFinal = (nombre != null && !nombre.isEmpty())
+                            ? nombre
+                            : (user != null ? user.getDisplayName() : null);
+
                     if (user != null && nombre != null && !nombre.isEmpty()) {
                         user.updateProfile(new UserProfileChangeRequest.Builder()
                                         .setDisplayName(nombre)
                                         .build())
-                                .addOnCompleteListener(t -> irAlMapa());   // esperar a que se guarde
+                                .addOnCompleteListener(t ->
+                                        guardarUsuario(user, nombreFinal, this::irAlMapa));
                     } else {
-                        irAlMapa();
+                        guardarUsuario(user, nombreFinal, this::irAlMapa);
                     }
                 })
                 .addOnFailureListener(e ->
@@ -70,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    void pgregister (View v) {
+    void pgregister(View v) {
         startActivity(new Intent(MainActivity.this, RegisterActivity.class));
         overridePendingTransition(0, 0);
     }
 
-    void unknownpassword (View v) {
+    void unknownpassword(View v) {
         EditText etEmail = findViewById(R.id.etEmail);
         String email = etEmail.getText().toString().trim();
 
@@ -96,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-    void login (View v) {
+
+    void login(View v) {
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etPassword = findViewById(R.id.etPassword);
 
@@ -117,16 +138,15 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                startActivity(new Intent(MainActivity.this, HomeActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
+                guardarUsuario(user, user != null ? user.getDisplayName() : null, () -> {
+                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                    overridePendingTransition(0, 0);
+                    finish();
+                });
             } else {
                 Toast.makeText(this, "Error: " + task.getException().getMessage(),
                         Toast.LENGTH_LONG).show();
             }
-
         });
-
     }
-
 }

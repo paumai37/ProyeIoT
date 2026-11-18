@@ -19,19 +19,25 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class cajasActivity extends AppCompatActivity {
 
-    // Caja con su rol del usuario actual ("ADMIN" o "USUARIO")
+    // Caja con su id de Firestore y el rol del usuario actual ("ADMIN" o "USUARIO")
     private static class Caja {
+        final String id;
         final String nombre;
         final String rol;
 
-        Caja(String nombre, String rol) {
+        Caja(String id, String nombre, String rol) {
+            this.id = id;
             this.nombre = nombre;
             this.rol = rol;
         }
@@ -40,6 +46,9 @@ public class cajasActivity extends AppCompatActivity {
     // Guardamos cada fila junto con su nombre para poder filtrar
     private final List<View> filas = new ArrayList<>();
     private final List<String> nombres = new ArrayList<>();
+
+    private LinearLayout cont;
+    private EditText etBuscar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,48 +61,12 @@ public class cajasActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Lista de cajas (sin adapter). Cambia los roles aquí para probar.
-        LinearLayout cont = findViewById(R.id.contCajas);
+        cont = findViewById(R.id.contCajas);
 
-        List<Caja> cajas = new ArrayList<>();
-        cajas.add(new Caja("Caja 1", "USUARIO"));
-        cajas.add(new Caja("Caja 2", "ADMIN"));
-        cajas.add(new Caja("Caja 3", "ADMIN"));
-
-        for (Caja caja : cajas) {
-            View fila = getLayoutInflater().inflate(R.layout.item_cajas, cont, false);
-            ((TextView) fila.findViewById(R.id.tvCaja)).setText(caja.nombre);
-
-            // Círculo según el rol
-            TextView circulo = fila.findViewById(R.id.vRol);
-            if ("ADMIN".equals(caja.rol)) {
-                circulo.setText("A");
-                circulo.setBackgroundResource(R.drawable.circulo_rol_admin);
-            } else {
-                circulo.setText("U");
-                circulo.setBackgroundResource(R.drawable.circulo_rol_usuario);
-            }
-
-            // Admin -> pantalla completa. Usuario -> pantalla de solo lectura.
-            View.OnClickListener abrir = v -> {
-                Class<?> destino = "ADMIN".equals(caja.rol)
-                        ? CajaActivity.class
-                        : CajaUsuarioActivity.class;
-                Intent i = new Intent(cajasActivity.this, destino);
-                i.putExtra("cajaNombre", caja.nombre);
-                i.putExtra("rol", caja.rol);
-                startActivity(i);
-            };
-            fila.setOnClickListener(abrir);                               // pulsar la tarjeta
-            fila.findViewById(R.id.btnAcceder).setOnClickListener(abrir); // pulsar el botón
-
-            cont.addView(fila);
-            filas.add(fila);
-            nombres.add(caja.nombre);
-        }
+        cargarCajas();
 
         // Buscador: filtra mientras escribes
-        EditText etBuscar = findViewById(R.id.etBuscar);
+        etBuscar = findViewById(R.id.etBuscar);
         etBuscar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -132,9 +105,7 @@ public class cajasActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.fabAnadir).setOnClickListener(this::popupCrearCaja);
-
     }
-
 
     void popupCrearCaja(View v) {
         View vista = getLayoutInflater().inflate(R.layout.popup_crear_caja, null);
@@ -162,6 +133,76 @@ public class cajasActivity extends AppCompatActivity {
         btnCancelar.setOnClickListener(b -> dialog.dismiss());
 
         dialog.show();
+    }
+
+    // Carga de Firestore las cajas donde el usuario actual es miembro
+    private void cargarCajas() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            Toast.makeText(this, "No hay sesión iniciada", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore.getInstance()
+                .collection("cajas")
+                .whereArrayContains("miembros", uid)
+                .get()
+                .addOnSuccessListener(this, snap -> {
+                    cont.removeAllViews();
+                    filas.clear();
+                    nombres.clear();
+
+                    if (snap.isEmpty()) {
+                        Toast.makeText(this, "No tienes cajas asignadas", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    for (DocumentSnapshot d : snap.getDocuments()) {
+                        String nombre = d.getString("nombre");
+                        Map<String, String> roles = (Map<String, String>) d.get("roles");
+                        String rol = (roles != null && roles.get(uid) != null) ? roles.get(uid) : "USUARIO";
+
+                        añadirFila(new Caja(d.getId(), nombre != null ? nombre : "Sin nombre", rol));
+                    }
+
+                    // Si ya había algo escrito en el buscador, se vuelve a aplicar
+                    if (etBuscar != null) filtrar(etBuscar.getText().toString());
+                })
+                .addOnFailureListener(this, e ->
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
+    private void añadirFila(Caja caja) {
+        View fila = getLayoutInflater().inflate(R.layout.item_cajas, cont, false);
+        ((TextView) fila.findViewById(R.id.tvCaja)).setText(caja.nombre);
+
+        // Círculo según el rol
+        TextView circulo = fila.findViewById(R.id.vRol);
+        if ("ADMIN".equals(caja.rol)) {
+            circulo.setText("A");
+            circulo.setBackgroundResource(R.drawable.circulo_rol_admin);
+        } else {
+            circulo.setText("U");
+            circulo.setBackgroundResource(R.drawable.circulo_rol_usuario);
+        }
+
+        // Admin -> pantalla completa. Usuario -> pantalla de solo lectura.
+        View.OnClickListener abrir = v -> {
+            Class<?> destino = "ADMIN".equals(caja.rol)
+                    ? CajaActivity.class
+                    : CajaUsuarioActivity.class;
+            Intent i = new Intent(cajasActivity.this, destino);
+            i.putExtra("cajaId", caja.id);
+            i.putExtra("cajaNombre", caja.nombre);
+            i.putExtra("rol", caja.rol);
+            startActivity(i);
+        };
+        fila.setOnClickListener(abrir);                               // pulsar la tarjeta
+        fila.findViewById(R.id.btnAcceder).setOnClickListener(abrir); // pulsar el botón
+
+        cont.addView(fila);
+        filas.add(fila);
+        nombres.add(caja.nombre);
     }
 
     private void filtrar(String texto) {

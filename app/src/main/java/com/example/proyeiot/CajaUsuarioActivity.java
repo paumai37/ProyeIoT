@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,11 +14,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CajaUsuarioActivity extends AppCompatActivity {
+
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,42 +34,18 @@ public class CajaUsuarioActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Nombre de la caja
+        db = FirebaseFirestore.getInstance();
+
+        // Datos que vienen de la lista de cajas
+        String cajaId = getIntent().getStringExtra("cajaId");
         String nombre = getIntent().getStringExtra("cajaNombre");
-        ((TextView) findViewById(R.id.tvNombreCaja)).setText(nombre != null ? nombre : "Caja Casa");
+        ((TextView) findViewById(R.id.tvNombreCaja)).setText(nombre != null ? nombre : "Caja");
 
-        // Descripción
-        ((TextView) findViewById(R.id.tvDescripcion)).setText(
-                "Caja de casa que contiene varios utensilios importantes para la empresa y archivos confidenciales.");
-
-        // Usuarios (solo lectura)
-        LinearLayout contUsuarios = findViewById(R.id.rvUsuarios);
-
-        List<Usuario> usuarios = new ArrayList<>();
-        usuarios.add(new Usuario("Sergio Benitez Ivars", "ADMIN"));
-        usuarios.add(new Usuario("Miguel Gonzalez Moià", "USUARIO"));
-
-        for (Usuario u : usuarios) {
-            View fila = getLayoutInflater().inflate(R.layout.item_usuario_info, contUsuarios, false);
-            ((TextView) fila.findViewById(R.id.tvNombre)).setText(u.nombre);
-
-            TextView circulo = fila.findViewById(R.id.tvRolCirculo);
-            if ("ADMIN".equals(u.rol)) {
-                circulo.setText("A");
-                circulo.setBackgroundResource(R.drawable.circulo_rol_admin);
-            } else {
-                circulo.setText("U");
-                circulo.setBackgroundResource(R.drawable.circulo_rol_usuario);
-            }
-            contUsuarios.addView(fila);
+        if (cajaId == null) {
+            Toast.makeText(this, "Caja no encontrada", Toast.LENGTH_SHORT).show();
+        } else {
+            cargarCaja(cajaId);
         }
-
-        // Objetos detectados
-        List<String> objetos = new ArrayList<>();
-        objetos.add("1x Archivos");
-        objetos.add("2x Soldadores");
-        objetos.add("2x Guantes");
-        ((TextView) findViewById(R.id.tvObjetos)).setText(String.join("\n", objetos));
 
         // Barra inferior
         BottomNavigationView nav = findViewById(R.id.bottomNav);
@@ -87,5 +67,66 @@ public class CajaUsuarioActivity extends AppCompatActivity {
             }
             return true;
         });
+    }
+
+    // Solo lectura: descripción, objetos y usuarios
+    private void cargarCaja(String cajaId) {
+        db.collection("cajas").document(cajaId).get()
+                .addOnSuccessListener(this, d -> {
+                    if (!d.exists()) {
+                        Toast.makeText(this, "La caja ya no existe", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    String nombre = d.getString("nombre");
+                    if (nombre != null) ((TextView) findViewById(R.id.tvNombreCaja)).setText(nombre);
+
+                    String desc = d.getString("descripcion");
+                    ((TextView) findViewById(R.id.tvDescripcion)).setText(desc != null ? desc : "");
+
+                    // Objetos detectados
+                    List<String> objetos = (List<String>) d.get("objetos");
+                    ((TextView) findViewById(R.id.tvObjetos)).setText(
+                            objetos != null && !objetos.isEmpty()
+                                    ? String.join("\n", objetos)
+                                    : "Sin objetos");
+
+                    // Usuarios (solo lectura)
+                    List<String> miembros = (List<String>) d.get("miembros");
+                    Map<String, String> roles = (Map<String, String>) d.get("roles");
+                    mostrarUsuarios(miembros, roles);
+                })
+                .addOnFailureListener(this, e ->
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
+    private void mostrarUsuarios(List<String> miembros, Map<String, String> roles) {
+        LinearLayout contUsuarios = findViewById(R.id.rvUsuarios);
+        contUsuarios.removeAllViews();
+        if (miembros == null) return;
+
+        for (String uid : miembros) {
+            View fila = getLayoutInflater().inflate(R.layout.item_usuario_info, contUsuarios, false);
+            TextView tvNombre = fila.findViewById(R.id.tvNombre);
+            tvNombre.setText("...");
+
+            String rol = (roles != null && roles.get(uid) != null) ? roles.get(uid) : "USUARIO";
+            TextView circulo = fila.findViewById(R.id.tvRolCirculo);
+            if ("ADMIN".equals(rol)) {
+                circulo.setText("A");
+                circulo.setBackgroundResource(R.drawable.circulo_rol_admin);
+            } else {
+                circulo.setText("U");
+                circulo.setBackgroundResource(R.drawable.circulo_rol_usuario);
+            }
+            contUsuarios.addView(fila);
+
+            db.collection("usuarios").document(uid).get()
+                    .addOnSuccessListener(this, u -> {
+                        String n = u.getString("nombre");
+                        tvNombre.setText(n != null && !n.isEmpty() ? n : "Sin nombre");
+                    })
+                    .addOnFailureListener(this, e -> tvNombre.setText("Sin nombre"));
+        }
     }
 }
