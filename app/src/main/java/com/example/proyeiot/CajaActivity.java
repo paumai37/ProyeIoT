@@ -42,7 +42,7 @@ public class CajaActivity extends AppCompatActivity {
     private String cajaId;
 
     // Detector (UDP)
-    private static final String CODIGO_SENSOR = "C0FDCD32";
+    private static final String CODIGO_SENSOR = "uid: C0FDCD32";
     private boolean sensorDetectado = false;
     private static final String TAG = "UDP";
     private static final int PUERTO = 5005;
