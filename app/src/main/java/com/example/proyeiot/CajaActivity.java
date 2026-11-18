@@ -42,12 +42,11 @@ public class CajaActivity extends AppCompatActivity {
     private String cajaId;
 
     // Detector (UDP)
-    private static final String CODIGO_SENSOR = "uid: C0FDCD32";
     private boolean sensorDetectado = false;
     private static final String TAG = "UDP";
     private static final int PUERTO = 5005;
     private UdpReceiver receptor;
-    private SwitchCompat switchEscucha;
+    private SwitchCompat switchBloquear;
     private volatile boolean recibiendoDatos = false;
 
     @Override
@@ -82,8 +81,8 @@ public class CajaActivity extends AppCompatActivity {
         findViewById(R.id.tvDescripcion).setOnClickListener(v -> editarDescripcion());
         findViewById(R.id.btnAnadirUsuario).setOnClickListener(v -> anadirUsuario());
 
-        // --- Escucha UDP del sensor (switch independiente del de bloquear) ---
-        switchEscucha = findViewById(R.id.switchBloquear);
+        // --- Escucha UDP del sensor (se controla con el switch de bloquear) ---
+        switchBloquear = findViewById(R.id.switchBloquear);
 
         receptor = new UdpReceiver(PUERTO, new UdpReceiver.Listener() {
             @Override
@@ -91,30 +90,23 @@ public class CajaActivity extends AppCompatActivity {
                 recibiendoDatos = true;
                 Log.d(TAG, ipOrigen + " → " + mensaje);
 
-                if (CODIGO_SENSOR.equals(mensaje) && !sensorDetectado) {
-                    sensorDetectado = true;   // para que no salga el Toast en cada paquete
+                // dist: o uid: significa que el sensor está conectado
+                if (!sensorDetectado && (mensaje.startsWith("dist:") || mensaje.startsWith("uid:"))) {
+                    sensorDetectado = true;
+                    Toast.makeText(CajaActivity.this, "Sensor detectado", Toast.LENGTH_SHORT).show();
+                }
+
+                if (mensaje.startsWith("uid:")) {
                     Toast.makeText(CajaActivity.this,
-                            "Sensor detectado", Toast.LENGTH_SHORT).show();
+                            "Tarjeta: " + mensaje.substring(4), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void alFallar(Exception e) {
+                // No tocamos el switch: cambiarlo escribiría en Firestore
                 Toast.makeText(CajaActivity.this,
-                        "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                switchEscucha.setChecked(false);
-            }
-        });
-
-        switchEscucha.setOnCheckedChangeListener((buttonView, activado) -> {
-            if (activado) {
-                sensorDetectado = false;
-                receptor.iniciar();
-                buscarSensor();
-                switchEscucha.setText("Escuchando en el puerto " + PUERTO);
-            } else {
-                receptor.detener();
-                switchEscucha.setText("Escucha desactivada");
+                        "Error UDP: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -160,11 +152,28 @@ public class CajaActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void iniciarEscucha() {
+        if (receptor.estaActivo()) return;   // evita arrancarla dos veces
+        sensorDetectado = false;
+        receptor.iniciar();
+        buscarSensor();
+    }
+
+    private void detenerEscucha() {
+        receptor.detener();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Al volver a la pantalla, retoma la escucha si el switch está en ON
+        if (switchBloquear != null && switchBloquear.isChecked()) iniciarEscucha();
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
-        // Solo apaga la escucha; ya NO toca el switch de bloquear (no escribe en Firestore)
-        switchEscucha.setChecked(false);
+        detenerEscucha();   // solo para el socket; el switch y Firestore no se tocan
     }
 
     @Override
@@ -190,16 +199,27 @@ public class CajaActivity extends AppCompatActivity {
                     String desc = d.getString("descripcion");
                     ((TextView) findViewById(R.id.tvDescripcion)).setText(desc != null ? desc : "");
 
-                    // Interruptor de bloqueo: primero el valor, después el listener
-                    // (así cargar los datos no provoca una escritura)
+                    // Interruptor de bloqueo + escucha UDP (un único listener)
                     SwitchCompat sw = findViewById(R.id.switchBloquear);
                     Boolean bloqueada = d.getBoolean("bloqueada");
                     boolean activo = bloqueada != null && bloqueada;
+
+                    // Primero el valor, después el listener
+                    // (así cargar los datos no provoca una escritura)
                     sw.setOnCheckedChangeListener(null);
                     sw.setChecked(activo);
                     sw.setText(activo ? "ON" : "OFF");
+
+                    // Estado inicial de la escucha según el valor guardado
+                    if (activo) iniciarEscucha(); else detenerEscucha();
+
                     sw.setOnCheckedChangeListener((b, nuevo) -> {
                         sw.setText(nuevo ? "ON" : "OFF");
+
+                        // 1) Escucha UDP
+                        if (nuevo) iniciarEscucha(); else detenerEscucha();
+
+                        // 2) Guardar en Firestore
                         db.collection("cajas").document(cajaId)
                                 .update("bloqueada", nuevo)
                                 .addOnFailureListener(e -> {
@@ -209,7 +229,8 @@ public class CajaActivity extends AppCompatActivity {
                                     sw.setOnCheckedChangeListener(null);
                                     sw.setChecked(!nuevo);
                                     sw.setText(!nuevo ? "ON" : "OFF");
-                                    // (si falla, recarga para dejar el listener bien puesto)
+                                    detenerEscucha();
+                                    // Recarga para dejar el listener bien puesto
                                     cargarCaja();
                                 });
                     });
@@ -229,6 +250,7 @@ public class CajaActivity extends AppCompatActivity {
                 .addOnFailureListener(this, e ->
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
+
 
     // Una fila por miembro. La fila se crea ya (para mantener el orden)
     // y el nombre se rellena cuando llega de Firestore.
