@@ -26,11 +26,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.io.ByteArrayOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -126,22 +129,16 @@ public class CajaActivity extends AppCompatActivity {
             public void alRecibirFoto(byte[] jpeg, int evento, int frameId) {
                 Log.d("FOTO", "foto completa: " + jpeg.length + " bytes");
                 if (isFinishing()) return;
-                Map<String, Object> datosFoto = new HashMap<>();
-                datosFoto.put("foto", Base64.encodeToString(jpeg, Base64.NO_WRAP));
 
-                db.collection("cajas").document(cajaId).collection("fotos").add(datosFoto)
-                        .addOnSuccessListener(refFoto -> {
-                            Map<String, Object> registro = new HashMap<>();
-                            registro.put("usuario", ultimoUid);
-                            registro.put("fecha", FieldValue.serverTimestamp());
-                            registro.put("fotoId", refFoto.getId());
-                            db.collection("cajas").document(cajaId).collection("registros").add(registro);
-                        });
+                // Primero comprobamos que la imagen es válida: no guardamos basura
                 Bitmap bmp = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
                 if (bmp == null) {
                     Toast.makeText(CajaActivity.this, "Foto incompleta", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                guardarFoto(ajustarTamano(jpeg, bmp));
+
                 ImageView iv = new ImageView(CajaActivity.this);
                 iv.setImageBitmap(bmp);
                 new AlertDialog.Builder(CajaActivity.this)
@@ -183,6 +180,45 @@ public class CajaActivity extends AppCompatActivity {
         });
     }
 
+
+    // Guarda la foto y su registro a la vez: o se guardan los dos o ninguno
+    private void guardarFoto(byte[] jpeg) {
+        DocumentReference cajaRef = db.collection("cajas").document(cajaId);
+        DocumentReference fotoRef = cajaRef.collection("fotos").document();
+        DocumentReference registroRef = cajaRef.collection("registros").document();
+
+        Map<String, Object> datosFoto = new HashMap<>();
+        datosFoto.put("foto", Base64.encodeToString(jpeg, Base64.NO_WRAP));
+
+        Map<String, Object> registro = new HashMap<>();
+        registro.put("usuario", ultimoUid);
+        registro.put("fecha", FieldValue.serverTimestamp());
+        registro.put("fotoId", fotoRef.getId());
+
+        WriteBatch batch = db.batch();
+        batch.set(fotoRef, datosFoto);
+        batch.set(registroRef, registro);
+
+        batch.commit()
+                .addOnSuccessListener(x -> cargarRegistro())   // refresca la lista de accesos
+                .addOnFailureListener(e -> Toast.makeText(CajaActivity.this,
+                        "No se pudo guardar la foto: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
+    // Firestore limita cada documento a 1 MiB y Base64 pesa un 33 % más que el JPEG.
+    // Si la foto es grande, se reduce hasta que quepa con margen.
+    private byte[] ajustarTamano(byte[] jpeg, Bitmap bmp) {
+        final int MAX_BYTES = 700_000;
+        byte[] resultado = jpeg;
+        Bitmap b = bmp;
+        while (resultado.length > MAX_BYTES && b.getWidth() > 320) {
+            b = Bitmap.createScaledBitmap(b, b.getWidth() * 3 / 4, b.getHeight() * 3 / 4, true);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            b.compress(Bitmap.CompressFormat.JPEG, 70, out);
+            resultado = out.toByteArray();
+        }
+        return resultado;
+    }
 
     private void verFoto(String fotoId) {
         db.collection("cajas").document(cajaId).collection("fotos").document(fotoId).get()
