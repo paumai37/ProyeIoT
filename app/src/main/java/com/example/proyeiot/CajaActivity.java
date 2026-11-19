@@ -1,8 +1,12 @@
 package com.example.proyeiot;
 
 import android.app.AlertDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -46,6 +50,8 @@ public class CajaActivity extends AppCompatActivity {
     private boolean sensorDetectado = false;
     private static final String TAG = "UDP";
     private static final int PUERTO = 5005;
+    private static final int PUERTO_FOTO = 5009;
+    private FotoUdpReceiver receptorFoto;
     private UdpReceiver receptor;
     private SwitchCompat switchBloquear;
     private volatile boolean recibiendoDatos = false;
@@ -110,6 +116,33 @@ public class CajaActivity extends AppCompatActivity {
                         "Error UDP: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+
+        receptorFoto = new FotoUdpReceiver(PUERTO_FOTO, new FotoUdpReceiver.Listener() {
+            @Override
+            public void alRecibirFoto(byte[] jpeg, int evento, int frameId) {
+                Log.d("FOTO", "foto completa: " + jpeg.length + " bytes");
+                if (isFinishing()) return;
+                Bitmap bmp = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
+                if (bmp == null) {
+                    Toast.makeText(CajaActivity.this, "Foto incompleta", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                ImageView iv = new ImageView(CajaActivity.this);
+                iv.setImageBitmap(bmp);
+                new AlertDialog.Builder(CajaActivity.this)
+                        .setTitle("Foto")
+                        .setView(iv)
+                        .setPositiveButton("Cerrar", null)
+                        .show();
+            }
+
+            @Override
+            public void alFallar(Exception e) {
+                Toast.makeText(CajaActivity.this, "Error foto UDP: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+        receptorFoto.iniciar();
+
 
         // Barra inferior
         BottomNavigationView nav = findViewById(R.id.bottomNav);
@@ -181,6 +214,7 @@ public class CajaActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (receptor != null) receptor.detener();
+        if (receptorFoto != null) receptorFoto.detener();
     }
 
     // Descripción, interruptor, objetos y usuarios
