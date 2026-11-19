@@ -114,6 +114,17 @@ public class CajaActivity extends AppCompatActivity {
                     Toast.makeText(CajaActivity.this,
                             "Tarjeta: " + mensaje.substring(4), Toast.LENGTH_SHORT).show();
                 }
+
+                if (mensaje.startsWith("dist:")) {
+                    try {
+                        float distancia = Float.parseFloat(mensaje.substring(5));
+                        if (distancia < 6) {
+                            Toast.makeText(CajaActivity.this, "Caja cerrada", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(CajaActivity.this, "error en caja", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
 
             @Override
