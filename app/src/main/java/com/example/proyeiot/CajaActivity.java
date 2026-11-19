@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.widget.ImageView;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +37,7 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,6 +45,7 @@ import java.util.function.Consumer;
 
 public class CajaActivity extends AppCompatActivity {
 
+    private String ultimoUid = "sin_uid";
     private FirebaseFirestore db;
     private String cajaId;
 
@@ -104,6 +107,7 @@ public class CajaActivity extends AppCompatActivity {
                 }
 
                 if (mensaje.startsWith("uid:")) {
+                    ultimoUid = mensaje.substring(4);
                     Toast.makeText(CajaActivity.this,
                             "Tarjeta: " + mensaje.substring(4), Toast.LENGTH_SHORT).show();
                 }
@@ -122,6 +126,17 @@ public class CajaActivity extends AppCompatActivity {
             public void alRecibirFoto(byte[] jpeg, int evento, int frameId) {
                 Log.d("FOTO", "foto completa: " + jpeg.length + " bytes");
                 if (isFinishing()) return;
+                Map<String, Object> datosFoto = new HashMap<>();
+                datosFoto.put("foto", Base64.encodeToString(jpeg, Base64.NO_WRAP));
+
+                db.collection("cajas").document(cajaId).collection("fotos").add(datosFoto)
+                        .addOnSuccessListener(refFoto -> {
+                            Map<String, Object> registro = new HashMap<>();
+                            registro.put("usuario", ultimoUid);
+                            registro.put("fecha", FieldValue.serverTimestamp());
+                            registro.put("fotoId", refFoto.getId());
+                            db.collection("cajas").document(cajaId).collection("registros").add(registro);
+                        });
                 Bitmap bmp = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
                 if (bmp == null) {
                     Toast.makeText(CajaActivity.this, "Foto incompleta", Toast.LENGTH_SHORT).show();
@@ -144,6 +159,8 @@ public class CajaActivity extends AppCompatActivity {
         receptorFoto.iniciar();
 
 
+
+
         // Barra inferior
         BottomNavigationView nav = findViewById(R.id.bottomNav);
         nav.setSelectedItemId(R.id.nav_cajas);   // antes del listener, para no dispararlo
@@ -164,6 +181,33 @@ public class CajaActivity extends AppCompatActivity {
             }
             return true;
         });
+    }
+
+
+    private void verFoto(String fotoId) {
+        db.collection("cajas").document(cajaId).collection("fotos").document(fotoId).get()
+                .addOnSuccessListener(this, d -> {
+                    String texto = d.getString("foto");
+                    if (texto == null) {
+                        Toast.makeText(this, "La foto no tiene datos", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    byte[] bytes = Base64.decode(texto, Base64.NO_WRAP);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (bmp == null) {
+                        Toast.makeText(this, "La foto está corrupta", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    ImageView iv = new ImageView(this);
+                    iv.setImageBitmap(bmp);
+                    new AlertDialog.Builder(this)
+                            .setTitle("Foto")
+                            .setView(iv)
+                            .setPositiveButton("Cerrar", null)
+                            .show();
+                })
+                .addOnFailureListener(this, e ->
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     private void buscarSensor() {
@@ -523,6 +567,13 @@ public class CajaActivity extends AppCompatActivity {
                         ((TextView) fila.findViewById(R.id.tvUsuario)).setText(usuario != null ? usuario : "-");
                         ((TextView) fila.findViewById(R.id.tvFecha)).setText(fecha);
                         contRegistro.addView(fila);
+                        String fotoId = r.getString("fotoId");
+                        View btnFoto = fila.findViewById(R.id.btnVerFoto);
+                        if (fotoId == null) {
+                            btnFoto.setVisibility(View.GONE);
+                        } else {
+                            btnFoto.setOnClickListener(v -> verFoto(fotoId));
+                        }
                     }
                 })
                 .addOnFailureListener(this, e ->
