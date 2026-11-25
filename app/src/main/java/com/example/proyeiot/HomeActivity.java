@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.UserInfo;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -26,6 +27,16 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.btnVolver).setOnClickListener(this::volver);
 
         texto();
+
+        // Botón atrás del móvil -> Ajustes
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                startActivity(new Intent(HomeActivity.this, AjustesActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
     }
 
     void CloseSesion(View v) {
@@ -67,4 +78,4 @@ public class HomeActivity extends AppCompatActivity {
             sesiontextView.setText("-");
         }
     }
-    }
+}

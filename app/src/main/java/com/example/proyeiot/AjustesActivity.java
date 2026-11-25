@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -44,6 +45,16 @@ public class AjustesActivity extends AppCompatActivity {
                 finish();
             }
             return true;
+        });
+
+        // Botón atrás del móvil -> Mapa
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                startActivity(new Intent(AjustesActivity.this, MapActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            }
         });
     }
 

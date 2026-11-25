@@ -24,6 +24,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Si ya hay sesión guardada, saltar el login
+        FirebaseUser actual = FirebaseAuth.getInstance().getCurrentUser();
+        if (actual != null) {
+            startActivity(new Intent(this, MapActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
+            return;   // importante: no seguir cargando el login
+        }
+
         setContentView(R.layout.activity_main);
         findViewById(R.id.btnGoRegister).setOnClickListener(this::pgregister);
         findViewById(R.id.btnRegister2).setOnClickListener(this::sesiongoogle);
