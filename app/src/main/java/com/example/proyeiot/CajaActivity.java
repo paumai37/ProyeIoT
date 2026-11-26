@@ -606,14 +606,30 @@ public class CajaActivity extends AppCompatActivity {
                     SimpleDateFormat fmt = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
 
                     for (DocumentSnapshot r : snap.getDocuments()) {
-                        String usuario = r.getString("usuario");
+                        String uidTarjeta = r.getString("usuario");
                         Timestamp ts = r.getTimestamp("fecha");
                         String fecha = ts != null ? fmt.format(new Date(ts.toDate().getTime())) : "-";
 
                         View fila = getLayoutInflater().inflate(R.layout.item_registro, contRegistro, false);
-                        ((TextView) fila.findViewById(R.id.tvUsuario)).setText(usuario != null ? usuario : "-");
+                        TextView tvUsuario = fila.findViewById(R.id.tvUsuario);
                         ((TextView) fila.findViewById(R.id.tvFecha)).setText(fecha);
+
+                        // Poner el nombre de la tarjeta
+
+                        if (uidTarjeta != null) {
+                            db.collection("cajas").document(cajaId)
+                                    .collection("tarjetas").document(uidTarjeta).get()
+                                    .addOnSuccessListener(t -> {
+                                        String nombreTarjeta = t.getString("nombre");
+                                        tvUsuario.setText(nombreTarjeta != null ? nombreTarjeta : uidTarjeta);
+                                    })
+                                    .addOnFailureListener(e -> tvUsuario.setText(uidTarjeta));
+                        } else {
+                            tvUsuario.setText("-");
+                        }
+
                         contRegistro.addView(fila);
+
                         String fotoId = r.getString("fotoId");
                         View btnFoto = fila.findViewById(R.id.btnVerFoto);
                         if (fotoId == null) {
